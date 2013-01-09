@@ -12,10 +12,10 @@ public class UtilityClass {
 
     public UtilityClass(TypeElement annotation, Collection<UtilityMethod> utilityMethods) {
         annotationName = annotation.getQualifiedName().toString();
-        Generate generatedClass = annotation.getAnnotation(Generate.class);
-        name = generatedClass.className();
-        description = generatedClass.description();
-        this.methods.addAll(utilityMethods);
+        Generate utilityClass = annotation.getAnnotation(Generate.class);
+        name = utilityClass.className();
+        description = utilityClass.description();
+        methods.addAll(utilityMethods);
     }
 
     public String annotationName() {

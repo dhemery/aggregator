@@ -28,16 +28,16 @@ public class Round {
         return utilityClasses;
     }
 
-    private Set<? extends Element> elementsAnnotatedAs(Class<? extends Annotation> annotation) {
+    private Set<? extends Element> elementsAnnotatedWith(Class<? extends Annotation> annotation) {
         return roundEnvironment.getElementsAnnotatedWith(annotation);
     }
 
-    private Set<? extends Element> elementsAnnotatedAs(TypeElement annotationElement) {
+    private Set<? extends Element> elementsAnnotatedWith(TypeElement annotationElement) {
         return roundEnvironment.getElementsAnnotatedWith(annotationElement);
     }
 
     private Iterable<TypeElement> generatorAnnotations() {
-        return generatorAnnotationsIn(elementsAnnotatedAs(Generate.class));
+        return generatorAnnotationsIn(elementsAnnotatedWith(Generate.class));
     }
 
     private Iterable<TypeElement> generatorAnnotationsIn(Set<? extends Element> elements) {
@@ -64,15 +64,15 @@ public class Round {
     }
 
     private UtilityClass utilityClassFor(TypeElement factoryAnnotation) {
-        return new UtilityClass(factoryAnnotation, utilityMethodsAnnotatedAs(factoryAnnotation));
+        return new UtilityClass(factoryAnnotation, utilityMethodsAnnotatedWith(factoryAnnotation));
     }
 
     private UtilityMethod utilityyMethod(Element element) {
         return new UtilityMethod((ExecutableElement) element, processingEnvironment);
     }
 
-    private Collection<UtilityMethod> utilityMethodsAnnotatedAs(TypeElement factoryAnnotation) {
-        return utilityMethodsIn(elementsAnnotatedAs(factoryAnnotation));
+    private Collection<UtilityMethod> utilityMethodsAnnotatedWith(TypeElement factoryAnnotation) {
+        return utilityMethodsIn(elementsAnnotatedWith(factoryAnnotation));
     }
 
     private Collection<UtilityMethod> utilityMethodsIn(Set<? extends Element> elements) {

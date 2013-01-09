@@ -19,17 +19,10 @@ public class UtilityClassWriter {
 
     public void write(UtilityClass c) {
         open(c);
-        writeCredits();
         declarePackage();
         writeJavadocComment();
         declareClass();
         close();
-    }
-
-    private void writeCredits() {
-        out.format("// Source generated %s%n", new Date());
-        out.format("// by http://github.com/dhemery/generator%n");
-        out.format("// for utility methods annotated with %s%n", c.annotationName());
     }
 
     private void declarePackage() {
@@ -43,10 +36,23 @@ public class UtilityClassWriter {
     }
 
     private void declareClass() {
+        declareGenerated();
         out.format("public class %s {", c.simpleName());
         declareConstructor();
         declareMethods();
         out.format("}%n");
+    }
+
+    private void declareGenerated() {
+        out.format("@javax.annotation.Generated(");
+        declareAnnotationElement("value", Generate.class.getName());
+        declareAnnotationElement(", comments", "Utility methods annoted with " + c.annotationName());
+        declareAnnotationElement(", date", new Date());
+        out.append(")\n");
+    }
+
+    private void declareAnnotationElement(String name, Object value) {
+        out.format("%s=\"%s\"", name, value);
     }
 
     private void declareConstructor() {
@@ -71,7 +77,7 @@ public class UtilityClassWriter {
             out = new PrintWriter(sourceFile.openWriter());
         } catch (IOException cause) {
             String message = "Cannot create source file " + c.qualifiedName()
-                            + " for methods annotated by " + c.annotationName();
+                            + " for utility methods annotated with " + c.annotationName();
             throw new RuntimeException(message, cause);
         }
     }
