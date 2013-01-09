@@ -1,4 +1,4 @@
-package com.dhemery.factory;
+package com.dhemery.generator;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -19,32 +19,32 @@ public class Round {
         this.processingEnvironment = processingEnvironment;
     }
 
-    public Iterable<FactoryClass> factoryClasses() {
-        Set<FactoryClass> factoryClasses = new HashSet<FactoryClass>();
-        for(TypeElement factoryAnnotation : factoryAnnotationsIn(elementsAnnotatedAs(FactoryAnnotation.class))) {
+    public Iterable<UtilityClassWriter> factoryClasses() {
+        Set<UtilityClassWriter> factoryClasses = new HashSet<UtilityClassWriter>();
+        for(TypeElement factoryAnnotation : factoryAnnotationsIn(elementsAnnotatedAs(Generate.class))) {
             factoryClasses.add(factoryClass(factoryAnnotation));
         }
         return factoryClasses;
     }
 
-    private FactoryClass factoryClass(TypeElement factoryAnnotation) {
-        return new FactoryClass(factoryAnnotation, factoryMethodsAnnotatedAs(factoryAnnotation));
+    private UtilityClassWriter factoryClass(TypeElement factoryAnnotation) {
+        return new UtilityClassWriter(factoryAnnotation, factoryMethodsAnnotatedAs(factoryAnnotation));
     }
 
-    private Collection<FactoryMethod> factoryMethodsAnnotatedAs(TypeElement factoryAnnotation) {
+    private Collection<UtilityMethodWriter> factoryMethodsAnnotatedAs(TypeElement factoryAnnotation) {
         return factoryMethodsIn(elementsAnnotatedAs(factoryAnnotation));
     }
 
-    private Collection<FactoryMethod> factoryMethodsIn(Set<? extends Element> elements) {
-        Set<FactoryMethod> factoryMethods = new HashSet<FactoryMethod>();
+    private Collection<UtilityMethodWriter> factoryMethodsIn(Set<? extends Element> elements) {
+        Set<UtilityMethodWriter> factoryMethods = new HashSet<UtilityMethodWriter>();
         for(Element element : elements) {
             factoryMethods.add(factoryMethod(element));
         }
         return factoryMethods;
     }
 
-    private FactoryMethod factoryMethod(Element element) {
-        return new FactoryMethod((ExecutableElement) element, processingEnvironment);
+    private UtilityMethodWriter factoryMethod(Element element) {
+        return new UtilityMethodWriter((ExecutableElement) element, processingEnvironment);
     }
 
     private static Iterable<TypeElement> factoryAnnotationsIn(Set<? extends Element> elements) {

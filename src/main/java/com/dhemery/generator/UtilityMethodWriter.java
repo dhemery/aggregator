@@ -1,4 +1,4 @@
-package com.dhemery.factory;
+package com.dhemery.generator;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
@@ -8,7 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class FactoryMethod {
+/**
+ * Writes a utility method.
+ */
+public class UtilityMethodWriter {
     private static final String INDENT = "    ";
     private final Element declaringClass;
     private final String javadocComment;
@@ -19,7 +22,12 @@ public class FactoryMethod {
     private final List<? extends VariableElement> parameters;
     private final List<? extends TypeMirror> thrownTypes;
 
-    public FactoryMethod(ExecutableElement methodElement, ProcessingEnvironment environment) {
+    /**
+     * Create a representation of a utility method.
+     * @param methodElement
+     * @param environment
+     */
+    public UtilityMethodWriter(ExecutableElement methodElement, ProcessingEnvironment environment) {
         declaringClass = methodElement.getEnclosingElement();
         modifiers = methodElement.getModifiers();
         typeParameters = methodElement.getTypeParameters();
