@@ -4,14 +4,14 @@
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
-
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>com.dhemery</groupId>
 	<artifactId>factory</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
 	<name>Factory Generator</name>
 	<description>Generates static factory classes</description>
+	<packaging>jar</packaging>
 	<url>https://github.com/dhemery/factory</url>
 
 	<licenses>
@@ -49,6 +49,7 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+                    <proc>none</proc>
 				</configuration>
 			</plugin>
 			<plugin>
