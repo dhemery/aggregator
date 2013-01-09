@@ -9,74 +9,92 @@ import java.util.List;
 import java.util.Set;
 
 public class FactoryMethod {
-    private final ExecutableElement methodElement;
-    private final ProcessingEnvironment environment;
+    private static final String INDENT = "    ";
+    private final Element declaringClass;
+    private final String javadocComment;
+    private final Set<Modifier> modifiers;
+    private final List<? extends TypeParameterElement> typeParameters;
+    private final TypeMirror returnType;
+    private final Name methodName;
+    private final List<? extends VariableElement> parameters;
+    private final List<? extends TypeMirror> thrownTypes;
 
     public FactoryMethod(ExecutableElement methodElement, ProcessingEnvironment environment) {
-        this.methodElement = methodElement;
-        this.environment = environment;
+        declaringClass = methodElement.getEnclosingElement();
+        modifiers = methodElement.getModifiers();
+        typeParameters = methodElement.getTypeParameters();
+        returnType = methodElement.getReturnType();
+        methodName = methodElement.getSimpleName();
+        parameters = methodElement.getParameters();
+        thrownTypes = methodElement.getThrownTypes();
+        javadocComment = environment.getElementUtils().getDocComment(methodElement);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        FactoryMethod that = (FactoryMethod) o;
-
-        return methodElement.equals(that.methodElement);
-    }
-
-    @Override
-    public int hashCode() {
-        return methodElement.hashCode();
-    }
-
-    public void appendDeclaration(PrintWriter out) {
-        Element declaringClass = methodElement.getEnclosingElement();
-        Set<Modifier> modifiers = methodElement.getModifiers();
-        List<? extends TypeParameterElement> typeParameters = methodElement.getTypeParameters();
-        TypeMirror returnType = methodElement.getReturnType();
-        Name methodName = methodElement.getSimpleName();
-        List<? extends VariableElement> parameters = methodElement.getParameters();
-        List<? extends TypeMirror> thrownTypes = methodElement.getThrownTypes();
-
-        out.append("   /**\n");
-        out.append("   ").append(environment.getElementUtils().getDocComment(methodElement)).append('\n');
-        out.append("   */\n");
-        out.append("    ");
-        writeList(out, modifiers, "", " ", " ");
-        writeList(out, typeParameters, "<", ",", "> ");
-        out.append(returnType.toString()).append(' ');
-        out.append(methodName);
+    public void writeTo(PrintWriter out) {
+        writeJavadocComment(out);
+        out.append(INDENT);
+        declareModifiers(out);
+        out.append(' ');
+        declareTypeParameters(out);
+        out.append(' ');
+        declareReturnType(out);
+        out.append(' ');
+        declareMethodName(out);
         out.append('(');
-        writeParameters(out, parameters);
+        declareParameters(out);
         out.append(')');
-        writeList(out, thrownTypes, " throws ", ", ", "");
+        declareExceptions(out);
         out.append(" {\n");
-        writeDelegateCall(out, declaringClass, methodName, parameters);
-        out.append("    }\n");
+        out.append(INDENT).append(INDENT);
+        declareBody(out);
+        out.append("\n");
+        out.append(INDENT);
+        out.append("}\n");
     }
 
-    private void writeDelegateCall(PrintWriter out, Element declaringClass, Name methodName, List<? extends VariableElement> parameters) {
-        out.append("        return ");
-        out.append(declaringClass.toString()).append('.').append(methodName).append('(');
-        writeList(out, parameters, "", ", ", "");
-        out.append(");\n");
+    private void writeJavadocComment(PrintWriter out) {
+        if(javadocComment == null) return;
+        out.format("/**%n");
+        out.format("%s", javadocComment);
+        out.format("*/%n");
     }
 
-    private void writeParameters(PrintWriter out, List<? extends VariableElement> parameters) {
+    private void declareModifiers(PrintWriter out) {
+        writeList(out, modifiers, "", " ", "");
+    }
+
+    private void declareTypeParameters(PrintWriter out) {
+        writeList(out, typeParameters, "<", ",", ">");
+    }
+
+    private void declareReturnType(PrintWriter out) {
+        out.append(returnType.toString());
+    }
+
+    private void declareMethodName(PrintWriter out) {
+        out.append(methodName);
+    }
+
+    private void declareParameters(PrintWriter out) {
         Iterator<? extends VariableElement> iterator = parameters.iterator();
         while(iterator.hasNext()) {
-            writeParameter(out, iterator.next());
+            declareParameter(out, iterator.next());
             if(iterator.hasNext()) out.append(", ");
         }
     }
 
-    private void writeParameter(PrintWriter out, VariableElement parameter) {
-        TypeMirror parameterType = parameter.asType();
-        out.append(parameterType.toString()).append(' ')
-                .append(parameter.getSimpleName());
+    private void declareParameter(PrintWriter out, VariableElement parameter) {
+        out.format("%s %s", parameter.asType(), parameter.getSimpleName());
+    }
+
+    private void declareExceptions(PrintWriter out) {
+        writeList(out, thrownTypes, "throws ", ", ", "");
+    }
+
+    private void declareBody(PrintWriter out) {
+        out.format("return %s.%s(", declaringClass, methodName);
+        writeList(out, parameters, "", ", ", "");
+        out.format(");");
     }
 
     private static <T> void writeList(PrintWriter out, Iterable<T> items, String prefix, String separator, String suffix) {
