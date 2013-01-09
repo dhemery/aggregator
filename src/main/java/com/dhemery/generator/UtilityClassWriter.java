@@ -1,85 +1,82 @@
 package com.dhemery.generator;
 
 import javax.annotation.processing.Filer;
-import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 
 public class UtilityClassWriter {
-    private final Collection<UtilityMethodWriter> factoryMethods = new HashSet<UtilityMethodWriter>();
-    private final String annotationName;
-    private final String className;
-    private final String description;
+    private final Filer filer;
+    private final UtilityMethodWriter methodWriter;
+    private UtilityClass c;
+    private PrintWriter out;
 
-    public UtilityClassWriter(TypeElement annotation, Collection<UtilityMethodWriter> utilityMethods) {
-        annotationName = annotation.getQualifiedName().toString();
-        Generate generatedClass = annotation.getAnnotation(Generate.class);
-        className = generatedClass.className();
-        description = generatedClass.description();
-        this.factoryMethods.addAll(utilityMethods);
+    public UtilityClassWriter(Filer filer, UtilityMethodWriter methodWriter) {
+        this.filer = filer;
+        this.methodWriter = methodWriter;
     }
 
-    public void write(Filer filer) {
-        PrintWriter out = classWriter(filer);
-
-        writeCredits(out);
-        declarePackage(out);
-        writeJavadocComment(out);
-        declareClass(out);
-        out.close();
+    public void write(UtilityClass c) {
+        open(c);
+        writeCredits();
+        declarePackage();
+        writeJavadocComment();
+        declareClass();
+        close();
     }
 
-    private void writeCredits(PrintWriter out) {
+    private void writeCredits() {
         out.format("// Source generated %s%n", new Date());
         out.format("// by http://github.com/dhemery/generator%n");
-        out.format("// for utility methods annotated with %s%n", annotationName);
+        out.format("// for utility methods annotated with %s%n", c.annotationName());
     }
 
-    private void declarePackage(PrintWriter out) {
-        out.format("package %s;%n%n", packageName());
+    private void declarePackage() {
+        out.format("package %s;%n%n", c.packageName());
     }
 
-    private void writeJavadocComment(PrintWriter out) {
+    private void writeJavadocComment() {
         out.append("/**\n");
-        out.format("* %s%n", description);
+        out.format("* %s%n", c.description());
         out.append("*/\n");
     }
 
-    private void declareClass(PrintWriter out) {
-        out.format("public class %s {", simpleClassName());
-        declareMethods(out);
+    private void declareClass() {
+        out.format("public class %s {", c.simpleName());
+        declareConstructor();
+        declareMethods();
         out.format("}%n");
     }
 
-    private void declareMethods(PrintWriter out) {
-        for(UtilityMethodWriter method : factoryMethods) {
-            declareMethod(out, method);
+    private void declareConstructor() {
+        out.format("%n    private %s(){}%n", c.simpleName());
+    }
+
+    private void declareMethods() {
+        for(UtilityMethod method : c.methods()) {
+            declareMethod(method);
         }
     }
 
-    private void declareMethod(PrintWriter out, UtilityMethodWriter method) {
+    private void declareMethod(UtilityMethod method) {
         out.append('\n');
-        method.writeTo(out);
+        methodWriter.write(method, out);
     }
 
-    private PrintWriter classWriter(Filer filer) {
+    private void open(UtilityClass c) {
+        this.c = c;
         try {
-            JavaFileObject sourceFile = filer.createSourceFile(className);
-            return new PrintWriter(sourceFile.openWriter());
+            JavaFileObject sourceFile = filer.createSourceFile(c.qualifiedName());
+            out = new PrintWriter(sourceFile.openWriter());
         } catch (IOException cause) {
-            throw new RuntimeException("Cannot create source file " + className, cause);
+            String message = "Cannot create source file " + c.qualifiedName()
+                            + " for methods annotated by " + c.annotationName();
+            throw new RuntimeException(message, cause);
         }
     }
 
-    private String packageName() {
-        return className.substring(0, className.lastIndexOf('.'));
-    }
-
-    private String simpleClassName() {
-        return className.substring(className.lastIndexOf('.') + 1);
+    private void close() {
+        out.close();
     }
 }

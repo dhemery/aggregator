@@ -1,111 +1,94 @@
 package com.dhemery.generator;
 
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.*;
-import javax.lang.model.type.TypeMirror;
+import javax.lang.model.element.Element;
 import java.io.PrintWriter;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Writes a utility method.
  */
 public class UtilityMethodWriter {
     private static final String INDENT = "    ";
-    private final Element declaringClass;
-    private final String javadocComment;
-    private final Set<Modifier> modifiers;
-    private final List<? extends TypeParameterElement> typeParameters;
-    private final TypeMirror returnType;
-    private final Name methodName;
-    private final List<? extends VariableElement> parameters;
-    private final List<? extends TypeMirror> thrownTypes;
+    private static final String END_OF_LINE = "[\r\n]+";
+    private UtilityMethod method;
+    private PrintWriter out;
 
-    /**
-     * Create a representation of a utility method.
-     * @param methodElement
-     * @param environment
-     */
-    public UtilityMethodWriter(ExecutableElement methodElement, ProcessingEnvironment environment) {
-        declaringClass = methodElement.getEnclosingElement();
-        modifiers = methodElement.getModifiers();
-        typeParameters = methodElement.getTypeParameters();
-        returnType = methodElement.getReturnType();
-        methodName = methodElement.getSimpleName();
-        parameters = methodElement.getParameters();
-        thrownTypes = methodElement.getThrownTypes();
-        javadocComment = environment.getElementUtils().getDocComment(methodElement);
-    }
-
-    public void writeTo(PrintWriter out) {
-        writeJavadocComment(out);
+    public void write(UtilityMethod method, PrintWriter out) {
+        this.method = method;
+        this.out = out;
+        writeJavadocComment();
         out.append(INDENT);
-        declareModifiers(out);
+        declareModifiers();
         out.append(' ');
-        declareTypeParameters(out);
+        declareTypeParameters();
         out.append(' ');
-        declareReturnType(out);
+        declareReturnType();
         out.append(' ');
-        declareMethodName(out);
+        declareMethodName();
         out.append('(');
-        declareParameters(out);
+        declareParameters();
         out.append(')');
-        declareExceptions(out);
+        declareExceptions();
         out.append(" {\n");
         out.append(INDENT).append(INDENT);
-        declareBody(out);
+        declareBody();
         out.append("\n");
         out.append(INDENT);
         out.append("}\n");
     }
 
-    private void writeJavadocComment(PrintWriter out) {
-        if(javadocComment == null) return;
-        out.format("/**%n");
-        out.format("%s", javadocComment);
-        out.format("*/%n");
+    private void writeJavadocComment() {
+        if(method.javadocComment() == null) return;
+        out.format("%s/**%n", INDENT);
+        for(String line : commentLines()) {
+           out.format("%s*%s%n", INDENT, line);
+        }
+        out.format("%s*/%n", INDENT);
     }
 
-    private void declareModifiers(PrintWriter out) {
-        writeList(out, modifiers, "", " ", "");
+    private String[] commentLines() {
+        return method.javadocComment().split(END_OF_LINE);
     }
 
-    private void declareTypeParameters(PrintWriter out) {
-        writeList(out, typeParameters, "<", ",", ">");
+    private void declareModifiers() {
+        writeList(method.modifiers(), "", " ", "");
     }
 
-    private void declareReturnType(PrintWriter out) {
-        out.append(returnType.toString());
+    private void declareTypeParameters() {
+        writeList(method.typeParameters(), "<", ",", ">");
     }
 
-    private void declareMethodName(PrintWriter out) {
-        out.append(methodName);
+    private void declareReturnType() {
+        out.append(method.returnType());
     }
 
-    private void declareParameters(PrintWriter out) {
-        Iterator<? extends VariableElement> iterator = parameters.iterator();
+    private void declareMethodName() {
+        out.append(method.name());
+    }
+
+    private void declareParameters() {
+        Iterator<? extends Element> iterator = method.parameters().iterator();
         while(iterator.hasNext()) {
-            declareParameter(out, iterator.next());
+            declareParameter(iterator.next());
             if(iterator.hasNext()) out.append(", ");
         }
     }
 
-    private void declareParameter(PrintWriter out, VariableElement parameter) {
+    private void declareParameter(Element parameter) {
         out.format("%s %s", parameter.asType(), parameter.getSimpleName());
     }
 
-    private void declareExceptions(PrintWriter out) {
-        writeList(out, thrownTypes, "throws ", ", ", "");
+    private void declareExceptions() {
+        writeList(method.thrownTypes(), "throws ", ", ", "");
     }
 
-    private void declareBody(PrintWriter out) {
-        out.format("return %s.%s(", declaringClass, methodName);
-        writeList(out, parameters, "", ", ", "");
+    private void declareBody() {
+        out.format("return %s.%s(", method.declaringClass(), method.name());
+        writeList(method.parameters(), "", ", ", "");
         out.format(");");
     }
 
-    private static <T> void writeList(PrintWriter out, Iterable<T> items, String prefix, String separator, String suffix) {
+    private <T> void writeList(Iterable<T> items, String prefix, String separator, String suffix) {
         Iterator<T> iterator = items.iterator();
         if(!iterator.hasNext()) return;
         out.append(prefix);

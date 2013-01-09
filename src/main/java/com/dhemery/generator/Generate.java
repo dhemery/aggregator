@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * Indicates that an annotation is a utility generator.
  * A utility generator annotation marks a public static method
  * as a utility method.
- * <p>The {@link UtilityClassProcessor} processor
+ * <p>The {@link UtilityProcessor} processor
  * generates a utility class with the specified name and description.
  * For each utility method,
  * the generated utility class includes a generated method with the same signature.

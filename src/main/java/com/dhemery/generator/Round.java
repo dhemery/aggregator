@@ -4,13 +4,14 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Round {
+    private static final List<Modifier> UTILITY_METHOD_REQUIRED_MODIFIERS = Arrays.asList(Modifier.STATIC, Modifier.PUBLIC);
     private final RoundEnvironment roundEnvironment;
     private final ProcessingEnvironment processingEnvironment;
 
@@ -19,40 +20,12 @@ public class Round {
         this.processingEnvironment = processingEnvironment;
     }
 
-    public Iterable<UtilityClassWriter> factoryClasses() {
-        Set<UtilityClassWriter> factoryClasses = new HashSet<UtilityClassWriter>();
-        for(TypeElement factoryAnnotation : factoryAnnotationsIn(elementsAnnotatedAs(Generate.class))) {
-            factoryClasses.add(factoryClass(factoryAnnotation));
+    public Iterable<UtilityClass> utilityClasses() {
+        Set<UtilityClass> utilityClasses = new HashSet<UtilityClass>();
+        for(TypeElement generatorAnnotation : generatorAnnotations()) {
+            utilityClasses.add(utilityClassFor(generatorAnnotation));
         }
-        return factoryClasses;
-    }
-
-    private UtilityClassWriter factoryClass(TypeElement factoryAnnotation) {
-        return new UtilityClassWriter(factoryAnnotation, factoryMethodsAnnotatedAs(factoryAnnotation));
-    }
-
-    private Collection<UtilityMethodWriter> factoryMethodsAnnotatedAs(TypeElement factoryAnnotation) {
-        return factoryMethodsIn(elementsAnnotatedAs(factoryAnnotation));
-    }
-
-    private Collection<UtilityMethodWriter> factoryMethodsIn(Set<? extends Element> elements) {
-        Set<UtilityMethodWriter> factoryMethods = new HashSet<UtilityMethodWriter>();
-        for(Element element : elements) {
-            factoryMethods.add(factoryMethod(element));
-        }
-        return factoryMethods;
-    }
-
-    private UtilityMethodWriter factoryMethod(Element element) {
-        return new UtilityMethodWriter((ExecutableElement) element, processingEnvironment);
-    }
-
-    private static Iterable<TypeElement> factoryAnnotationsIn(Set<? extends Element> elements) {
-        Set<TypeElement> factoryAnnotations = new HashSet<TypeElement>();
-        for(Element element : elements) {
-            factoryAnnotations.add((TypeElement) element);
-        }
-        return factoryAnnotations;
+        return utilityClasses;
     }
 
     private Set<? extends Element> elementsAnnotatedAs(Class<? extends Annotation> annotation) {
@@ -61,5 +34,56 @@ public class Round {
 
     private Set<? extends Element> elementsAnnotatedAs(TypeElement annotationElement) {
         return roundEnvironment.getElementsAnnotatedWith(annotationElement);
+    }
+
+    private Iterable<TypeElement> generatorAnnotations() {
+        return generatorAnnotationsIn(elementsAnnotatedAs(Generate.class));
+    }
+
+    private Iterable<TypeElement> generatorAnnotationsIn(Set<? extends Element> elements) {
+        Set<TypeElement> generatorAnnotations = new HashSet<TypeElement>();
+        for(Element element : elements) {
+            if(isGeneratorAnnotation(element)) {
+                generatorAnnotations.add((TypeElement) element);
+            }
+        }
+        return generatorAnnotations;
+    }
+
+    private void error(Element element, String message) {
+        String fullMessage = element.toString() + ' ' + message;
+        processingEnvironment.getMessager().printMessage(Diagnostic.Kind.WARNING, fullMessage);
+    }
+
+    private static boolean isGeneratorAnnotation(Element element) {
+        return true;
+    }
+
+    private boolean isUtilityMethod(Element element) {
+        return element.getModifiers().containsAll(UTILITY_METHOD_REQUIRED_MODIFIERS);
+    }
+
+    private UtilityClass utilityClassFor(TypeElement factoryAnnotation) {
+        return new UtilityClass(factoryAnnotation, utilityMethodsAnnotatedAs(factoryAnnotation));
+    }
+
+    private UtilityMethod utilityyMethod(Element element) {
+        return new UtilityMethod((ExecutableElement) element, processingEnvironment);
+    }
+
+    private Collection<UtilityMethod> utilityMethodsAnnotatedAs(TypeElement factoryAnnotation) {
+        return utilityMethodsIn(elementsAnnotatedAs(factoryAnnotation));
+    }
+
+    private Collection<UtilityMethod> utilityMethodsIn(Set<? extends Element> elements) {
+        Set<UtilityMethod> utilityMethods = new HashSet<UtilityMethod>();
+        for(Element element : elements) {
+            if(isUtilityMethod(element)) {
+                utilityMethods.add(utilityyMethod(element));
+            } else {
+//                error(element, "must be declared public static");
+            }
+        }
+        return utilityMethods;
     }
 }
