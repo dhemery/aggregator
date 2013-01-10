@@ -1,0 +1,16 @@
+<project name="utility-generator-pages" default="snapshot">
+    <property name="build.dir" value="${basedir}/target" />
+    <property name="repo.dir" value="${build.dir}/repo" />
+
+    <target name="repo">
+        <exec executable="git" dir="${basedir}">
+            <arg line="clone . ${repo.dir}" />
+        </exec>
+    </target>
+
+    <target name="snapshot" depends="repo" description="Create API Documentation from the master branch>
+        <exec executable="mvn" dir="target/repo">
+            <arg line="clean javadoc:javadoc" />
+        </exec>
+    </target>
+</project>
