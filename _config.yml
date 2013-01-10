@@ -1,0 +1,6 @@
+project: generator
+
+# Options to render like GitHub pages
+safe: true
+lsi: false
+pygments: true
