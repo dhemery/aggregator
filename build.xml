@@ -9,7 +9,7 @@
         <delete dir="${build.dir}" quiet="true" />
     </target>
 
-    <target name="clean-snapshot" depends="clean" description="Remove the SNAPSHOT directory">
+    <target name="clean-snapshot" description="Remove the SNAPSHOT directory">
         <delete dir="${snapshot.dir}" />
     </target>
 
