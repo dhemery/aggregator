@@ -76,7 +76,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9</version>
                 <configuration>
-                    <destDir>${project.reporting.outputDirectory}/${project.version}</destDir>
+                    <destDir>${project.reporting.outputDirectory}/SNAPSHOT</destDir>
                     <javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
                 </configuration>
                 <executions>
@@ -97,8 +97,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
                 <artifactId>site-maven-plugin</artifactId>
                 <version>0.6</version>
                 <configuration>
-                    <message>Creating site for
-                    ${project.version}</message>
+                    <message>Creating site for ${project.version}</message>
                 </configuration>
                 <executions>
                     <execution>
