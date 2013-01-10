@@ -1,9 +1,14 @@
-/.idea
+# Eclipse settings
 /.settings
 /.project
 /.classpath
-*.iml
+
+
+# IntelliJ IDEA settings: http://devnet.jetbrains.net/docs/DOC-1186
 *.ipr
 *.iws
-*.swp
+/.idea/workspace.xml
+/.idea/tasks.xml
+
+# Maven output
 /target
