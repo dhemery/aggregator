@@ -1,16 +1,34 @@
 <project name="utility-generator-pages" default="snapshot">
     <property name="build.dir" value="${basedir}/target" />
     <property name="repo.dir" value="${build.dir}/repo" />
+    <property name="javadoc.dir" value="${repo.dir}/target/site/apidocs" />
+    <property name="api.dir" value="${basedir}/api" />
+    <property name="snapshot.dir" value="${api.dir}/SNAPSHOT" />
 
-    <target name="repo">
-        <exec executable="git" dir="${basedir}">
-            <arg line="clone . ${repo.dir}" />
-        </exec>
+    <target name="clean" description="Remove intermediate build artifacts" >
+        <delete dir="${build.dir}" quiet="true" />
     </target>
 
-    <target name="snapshot" depends="repo" description="Create API Documentation from the master branch>
-        <exec executable="mvn" dir="target/repo">
+    <target name="clean-snapshot" depends="clean" description="Remove the SNAPSHOT directory">
+        <delete dir="${snapshot.dir}" />
+    </target>
+
+    <target name="javadocs" depends="repo" >
+        <exec executable="mvn" dir="${repo.dir}">
             <arg line="clean javadoc:javadoc" />
         </exec>
     </target>
+
+    <target name="repo">
+        <exec executable="git" dir="${basedir}">
+            <arg line="clone -b master . ${repo.dir}" />
+        </exec>
+    </target>
+
+    <target name="snapshot" depends="javadocs, clean-snapshot" description="Create API Documentation from the master branch">
+        <copy todir="${snapshot.dir}">
+            <fileset dir="${javadoc.dir}"/>
+        </copy>
+    </target>
 </project>
+
