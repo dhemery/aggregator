@@ -4,7 +4,7 @@ import javax.annotation.processing.Filer;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Date;
+import java.util.*;
 
 public class UtilityClassWriter {
     private final Filer filer;
@@ -60,9 +60,15 @@ public class UtilityClassWriter {
     }
 
     private void declareMethods() {
-        for(UtilityMethod method : c.methods()) {
+        for(UtilityMethod method : sorted(c.methods())) {
             declareMethod(method);
         }
+    }
+
+    private List<UtilityMethod> sorted(Collection<UtilityMethod> methods) {
+        List<UtilityMethod> methodList = new ArrayList<>(methods);
+        Collections.sort(methodList);
+        return methodList;
     }
 
     private void declareMethod(UtilityMethod method) {

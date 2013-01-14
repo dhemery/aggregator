@@ -6,7 +6,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Set;
 
-public class UtilityMethod {
+public class UtilityMethod implements Comparable<UtilityMethod> {
     private final String declaringClass;
     private final String javadocComment;
     private final Set<Modifier> modifiers;
@@ -57,5 +57,12 @@ public class UtilityMethod {
 
     public Iterable<? extends TypeParameterElement> typeParameters() {
         return typeParameters;
+    }
+
+    @Override
+    public int compareTo(UtilityMethod that) {
+        int methodNameComparison = this.name.compareTo(that.name);
+        if(methodNameComparison != 0) return methodNameComparison;
+        return this.declaringClass.compareTo(that.declaringClass);
     }
 }
