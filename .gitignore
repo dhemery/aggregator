@@ -12,3 +12,7 @@
 
 # Maven output
 /target
+
+# output from gh-pages branch
+_site
+
