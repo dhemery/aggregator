@@ -1,13 +1,12 @@
-package com.dhemery.generator;
+package com.dhemery.generator.internal;
+
+import com.dhemery.generator.Generate;
 
 import javax.annotation.processing.Filer;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-
-import static com.dhemery.generator.Names.packageName;
-import static com.dhemery.generator.Names.simpleName;
 
 public class UtilityClassWriter {
     private final Filer filer;
@@ -31,7 +30,7 @@ public class UtilityClassWriter {
     }
 
     private void declarePackage() {
-        out.format("package %s;%n%n", packageName(c.name()));
+        out.format("package %s;%n%n", Names.packageName(c.name()));
     }
 
     private void writeJavadocComment() {
@@ -42,7 +41,7 @@ public class UtilityClassWriter {
 
     private void declareClass() {
         declareGenerated();
-        out.format("public class %s {", simpleName(c.name()));
+        out.format("public class %s {", Names.simpleName(c.name()));
         declareConstructor();
         declareMethods();
         out.format("}%n");
@@ -61,7 +60,7 @@ public class UtilityClassWriter {
     }
 
     private void declareConstructor() {
-        out.format("%n    private %s(){}%n", simpleName(c.name()));
+        out.format("%n    private %s(){}%n", Names.simpleName(c.name()));
     }
 
     private void declareMethods() {

@@ -1,5 +1,7 @@
 package com.dhemery.generator;
 
+import com.dhemery.generator.internal.*;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;

@@ -1,6 +1,6 @@
-package com.dhemery.generator;
+package com.dhemery.generator.internal;
 
-import com.dhemery.generator.ListComparator;
+import com.dhemery.generator.internal.ListComparator;
 import org.junit.Test;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
-package com.dhemery.generator;
+package com.dhemery.generator.internal;
 
-import com.dhemery.generator.TypeNameComparator;
+import com.dhemery.generator.internal.TypeNameComparator;
 import org.junit.Test;
 
 import java.util.Comparator;

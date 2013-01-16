@@ -1,4 +1,4 @@
-package com.dhemery.generator;
+package com.dhemery.generator.internal;
 
 import java.util.Comparator;
 import java.util.List;

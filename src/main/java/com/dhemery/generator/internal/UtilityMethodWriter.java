@@ -1,6 +1,4 @@
-package com.dhemery.generator;
-
-import com.dhemery.generator.UtilityMethod;
+package com.dhemery.generator.internal;
 
 import javax.lang.model.element.Element;
 import java.io.PrintWriter;

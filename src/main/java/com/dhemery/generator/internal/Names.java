@@ -1,4 +1,4 @@
-package com.dhemery.generator;
+package com.dhemery.generator.internal;
 
 public class Names {
     public static String packageName(String name) {
