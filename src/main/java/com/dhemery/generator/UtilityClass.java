@@ -1,6 +1,4 @@
-package com.dhemery.generator.internal;
-
-import com.dhemery.generator.Generate;
+package com.dhemery.generator;
 
 import javax.lang.model.element.TypeElement;
 import java.util.Collection;
@@ -32,15 +30,7 @@ public class UtilityClass {
         return methods;
     }
 
-    public String packageName() {
-        return name.substring(0, name.lastIndexOf('.'));
-    }
-
-    public String qualifiedName() {
+    public String name() {
         return name;
-    }
-
-    public String simpleName() {
-        return name.substring(name.lastIndexOf('.') + 1);
     }
 }

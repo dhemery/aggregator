@@ -1,6 +1,4 @@
-package com.dhemery.generator.internal;
-
-import com.dhemery.generator.Generate;
+package com.dhemery.generator;
 
 import javax.annotation.processing.Filer;
 import javax.tools.JavaFileObject;
@@ -8,15 +6,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
+import static com.dhemery.generator.Names.packageName;
+import static com.dhemery.generator.Names.simpleName;
+
 public class UtilityClassWriter {
     private final Filer filer;
     private final UtilityMethodWriter methodWriter;
+    private final Comparator<? super UtilityMethod> methodComparator;
     private UtilityClass c;
     private PrintWriter out;
 
-    public UtilityClassWriter(Filer filer, UtilityMethodWriter methodWriter) {
+    public UtilityClassWriter(Filer filer, UtilityMethodWriter methodWriter, Comparator<? super UtilityMethod> methodComparator) {
         this.filer = filer;
         this.methodWriter = methodWriter;
+        this.methodComparator = methodComparator;
     }
 
     public void write(UtilityClass c) {
@@ -28,7 +31,7 @@ public class UtilityClassWriter {
     }
 
     private void declarePackage() {
-        out.format("package %s;%n%n", c.packageName());
+        out.format("package %s;%n%n", packageName(c.name()));
     }
 
     private void writeJavadocComment() {
@@ -39,7 +42,7 @@ public class UtilityClassWriter {
 
     private void declareClass() {
         declareGenerated();
-        out.format("public class %s {", c.simpleName());
+        out.format("public class %s {", simpleName(c.name()));
         declareConstructor();
         declareMethods();
         out.format("}%n");
@@ -58,7 +61,7 @@ public class UtilityClassWriter {
     }
 
     private void declareConstructor() {
-        out.format("%n    private %s(){}%n", c.simpleName());
+        out.format("%n    private %s(){}%n", simpleName(c.name()));
     }
 
     private void declareMethods() {
@@ -69,7 +72,7 @@ public class UtilityClassWriter {
 
     private List<UtilityMethod> sorted(Collection<UtilityMethod> methods) {
         List<UtilityMethod> methodList = new ArrayList<>(methods);
-        Collections.sort(methodList);
+        Collections.sort(methodList, methodComparator);
         return methodList;
     }
 
@@ -81,10 +84,10 @@ public class UtilityClassWriter {
     private void open(UtilityClass c) {
         this.c = c;
         try {
-            JavaFileObject sourceFile = filer.createSourceFile(c.qualifiedName());
+            JavaFileObject sourceFile = filer.createSourceFile(c.name());
             out = new PrintWriter(sourceFile.openWriter());
         } catch (IOException cause) {
-            String message = "Cannot create source file " + c.qualifiedName()
+            String message = "Cannot create source file " + c.name()
                             + " for utility methods annotated with " + c.annotationName();
             throw new RuntimeException(message, cause);
         }

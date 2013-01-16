@@ -1,4 +1,4 @@
-package com.dhemery.generator.internal;
+package com.dhemery.generator;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
@@ -6,7 +6,7 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Set;
 
-public class UtilityMethod implements Comparable<UtilityMethod> {
+public class UtilityMethod {
     private final String declaringClass;
     private final String javadocComment;
     private final Set<Modifier> modifiers;
@@ -57,16 +57,5 @@ public class UtilityMethod implements Comparable<UtilityMethod> {
 
     public Iterable<? extends TypeParameterElement> typeParameters() {
         return typeParameters;
-    }
-
-    @Override
-    public int compareTo(UtilityMethod that) {
-        int methodNameComparison = this.name.compareTo(that.name);
-        if(methodNameComparison != 0) return methodNameComparison;
-        return parametersOf(this).compareTo(parametersOf(that));
-    }
-
-    private ParameterList parametersOf(UtilityMethod method) {
-        return new ParameterList(method.parameters());
     }
 }
