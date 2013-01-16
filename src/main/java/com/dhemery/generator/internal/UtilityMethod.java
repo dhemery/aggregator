@@ -1,9 +1,8 @@
-package com.dhemery.generator;
+package com.dhemery.generator.internal;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -64,33 +63,10 @@ public class UtilityMethod implements Comparable<UtilityMethod> {
     public int compareTo(UtilityMethod that) {
         int methodNameComparison = this.name.compareTo(that.name);
         if(methodNameComparison != 0) return methodNameComparison;
-        return compareTypes(that);
+        return parametersOf(this).compareTo(parametersOf(that));
     }
 
-    private int compareTypes(UtilityMethod that) {
-        List<String> thisSimpleTypeNames = simpleTypeNames(this);
-        List<String> thatSimpleTypeNames = simpleTypeNames(that);
-        for(int i = 0 ; i < thisSimpleTypeNames.size() ; i++) {
-            if(thatSimpleTypeNames.size() < i) return 1;
-            String thisOne = thisSimpleTypeNames.get(i);
-            String thatOne = thatSimpleTypeNames.get(i);
-            int comparison = thisOne.compareTo(thatOne);
-            if(comparison != 0) return comparison;
-        }
-        return 0;
-    }
-
-    private List<String> simpleTypeNames(UtilityMethod method) {
-        List<String> names = new ArrayList<>();
-        for(Element parameter : method.parameters) {
-            names.add(nameOf(parameter));
-        }
-        return names;
-    }
-
-    private String nameOf(Element parameter) {
-        String qualifiedName = parameter.asType().toString();
-        if(!qualifiedName.contains(".")) return qualifiedName;
-        return qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
+    private ParameterList parametersOf(UtilityMethod method) {
+        return new ParameterList(method.parameters());
     }
 }

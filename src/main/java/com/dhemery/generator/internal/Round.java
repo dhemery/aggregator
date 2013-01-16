@@ -1,4 +1,6 @@
-package com.dhemery.generator;
+package com.dhemery.generator.internal;
+
+import com.dhemery.generator.Generate;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;

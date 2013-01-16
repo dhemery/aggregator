@@ -1,5 +1,10 @@
 package com.dhemery.generator;
 
+import com.dhemery.generator.internal.Round;
+import com.dhemery.generator.internal.UtilityClass;
+import com.dhemery.generator.internal.UtilityClassWriter;
+import com.dhemery.generator.internal.UtilityMethodWriter;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
