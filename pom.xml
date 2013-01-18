@@ -9,11 +9,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dhemery</groupId>
-    <artifactId>utility-generator</artifactId>
+    <artifactId>factory-generator</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Utility Generator</name>
-    <description>A Java annotation processor that generates utility
-    classes of annotated public static methods.</description>
+    <name>Factory Generator</name>
+    <description>A Java annotation processor that generates factory
+    classes based on specially annotated factory methods.</description>
     <packaging>jar</packaging>
     <url>https://github.com/dhemery/generator</url>
     <licenses>

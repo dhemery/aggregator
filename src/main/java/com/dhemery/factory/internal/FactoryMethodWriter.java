@@ -1,19 +1,19 @@
-package com.dhemery.generator.internal;
+package com.dhemery.factory.internal;
 
 import javax.lang.model.element.Element;
 import java.io.PrintWriter;
 import java.util.Iterator;
 
 /**
- * Writes a utility method.
+ * Writes declarations of factory methods.
  */
-public class UtilityMethodWriter {
+public class FactoryMethodWriter {
     private static final String INDENT = "    ";
     private static final String END_OF_LINE = "[\r\n]+";
-    private UtilityMethod method;
+    private FactoryMethod method;
     private PrintWriter out;
 
-    public void write(UtilityMethod method, PrintWriter out) {
+    public void write(FactoryMethod method, PrintWriter out) {
         this.method = method;
         this.out = out;
         writeJavadocComment();

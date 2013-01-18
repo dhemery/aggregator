@@ -1,6 +1,6 @@
-package com.dhemery.generator.internal;
+package com.dhemery.factory.internal;
 
-import com.dhemery.generator.Generate;
+import com.dhemery.factory.Factory;
 
 import javax.annotation.processing.Filer;
 import javax.tools.JavaFileObject;
@@ -8,20 +8,27 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
-public class UtilityClassWriter {
+/**
+ * Writes source files for factory classes.
+ */
+public class FactoryClassWriter {
     private final Filer filer;
-    private final UtilityMethodWriter methodWriter;
-    private final Comparator<? super UtilityMethod> methodComparator;
-    private UtilityClass c;
+    private final FactoryMethodWriter methodWriter;
+    private final Comparator<? super FactoryMethod> methodComparator;
+    private FactoryClass c;
     private PrintWriter out;
 
-    public UtilityClassWriter(Filer filer, UtilityMethodWriter methodWriter, Comparator<? super UtilityMethod> methodComparator) {
+    public FactoryClassWriter(Filer filer, FactoryMethodWriter methodWriter, Comparator<? super FactoryMethod> methodComparator) {
         this.filer = filer;
         this.methodWriter = methodWriter;
         this.methodComparator = methodComparator;
     }
 
-    public void write(UtilityClass c) {
+    /**
+     * Write a source file for the given factory class.
+     * @param c describes the factory class to write
+     */
+    public void write(FactoryClass c) {
         open(c);
         declarePackage();
         writeJavadocComment();
@@ -35,7 +42,7 @@ public class UtilityClassWriter {
 
     private void writeJavadocComment() {
         out.append("/**\n");
-        out.format("* %s%n", c.description());
+        out.format("* %s%n", c.javadoc());
         out.append("*/\n");
     }
 
@@ -49,8 +56,8 @@ public class UtilityClassWriter {
 
     private void declareGenerated() {
         out.format("@javax.annotation.Generated(");
-        declareAnnotationElement("value", Generate.class.getName());
-        declareAnnotationElement(", comments", "Utility methods annoted with " + c.annotationName());
+        declareAnnotationElement("value", Factory.class.getName());
+        declareAnnotationElement(", comments", "Factory methods annoted with " + c.annotationName());
         declareAnnotationElement(", date", new Date());
         out.append(")\n");
     }
@@ -64,30 +71,30 @@ public class UtilityClassWriter {
     }
 
     private void declareMethods() {
-        for(UtilityMethod method : sorted(c.methods())) {
+        for(FactoryMethod method : sorted(c.methods())) {
             declareMethod(method);
         }
     }
 
-    private List<UtilityMethod> sorted(Collection<UtilityMethod> methods) {
-        List<UtilityMethod> methodList = new ArrayList<>(methods);
+    private List<FactoryMethod> sorted(Collection<FactoryMethod> methods) {
+        List<FactoryMethod> methodList = new ArrayList<>(methods);
         Collections.sort(methodList, methodComparator);
         return methodList;
     }
 
-    private void declareMethod(UtilityMethod method) {
+    private void declareMethod(FactoryMethod method) {
         out.append('\n');
         methodWriter.write(method, out);
     }
 
-    private void open(UtilityClass c) {
+    private void open(FactoryClass c) {
         this.c = c;
         try {
             JavaFileObject sourceFile = filer.createSourceFile(c.name());
             out = new PrintWriter(sourceFile.openWriter());
         } catch (IOException cause) {
             String message = "Cannot create source file " + c.name()
-                            + " for utility methods annotated with " + c.annotationName();
+                            + " for factory methods annotated with " + c.annotationName();
             throw new RuntimeException(message, cause);
         }
     }

@@ -1,4 +1,4 @@
-package com.dhemery.generator.internal;
+package com.dhemery.factory.internal;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
@@ -6,7 +6,10 @@ import javax.lang.model.type.TypeMirror;
 import java.util.List;
 import java.util.Set;
 
-public class UtilityMethod {
+/**
+ * Represents a factory method annotated by a factory annotation.
+ */
+public class FactoryMethod {
     private final String declaringClass;
     private final String javadocComment;
     private final Set<Modifier> modifiers;
@@ -16,7 +19,7 @@ public class UtilityMethod {
     private final List<? extends VariableElement> parameters;
     private final List<? extends TypeMirror> thrownTypes;
 
-    public UtilityMethod(ExecutableElement methodElement, ProcessingEnvironment environment) {
+    public FactoryMethod(ExecutableElement methodElement, ProcessingEnvironment environment) {
         declaringClass = methodElement.getEnclosingElement().toString();
         modifiers = methodElement.getModifiers();
         typeParameters = methodElement.getTypeParameters();

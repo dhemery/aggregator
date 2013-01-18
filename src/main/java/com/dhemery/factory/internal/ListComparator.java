@@ -1,9 +1,13 @@
-package com.dhemery.generator.internal;
+package com.dhemery.factory.internal;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Compares lists by applying the given comparator to correspoding elements of the lists.
+ * @param <T> the type of object in the lists.
+ */
 public class ListComparator<T> implements Comparator<List<? extends T>> {
     private final Comparator<T> elementComparator;
 

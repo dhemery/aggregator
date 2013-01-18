@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/utility-generator.iml" filepath="$PROJECT_DIR$/utility-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/factory-generator.iml" filepath="$PROJECT_DIR$/factory-generator.iml" />
     </modules>
   </component>
 </project>
