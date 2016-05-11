@@ -21,8 +21,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="factory-generator" target="1.7" />
       <module name="utility-generator" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
-

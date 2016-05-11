@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.ANNOTATION_TYPE)
-public @interface Factory {
+public @interface MarksFactoryMethods {
     /**
      * The fully qualified name of the factory class to generate.
      */

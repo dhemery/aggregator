@@ -18,7 +18,7 @@ import java.util.Set;
  * based on specially annotated factory methods.
  *
  * <p>A <strong>factory annotation</strong>
- * is an annotation that is itself annotated with {@link Factory}.
+ * is an annotation that is itself annotated with {@link MarksFactoryMethods}.
  *
  * <p>For each factory annotation,
  * this processor generates a source file for a Java class.
@@ -33,8 +33,8 @@ import java.util.Set;
  * <li>Returns the annotated factory method's result.
  * </ul>
  */
-@SupportedAnnotationTypes("com.dhemery.factory.Factory")
-public class FactoryProcessor extends AbstractProcessor {
+@SupportedAnnotationTypes("com.dhemery.factory.MarksFactoryMethods")
+public class GenerateFactoryClasses extends AbstractProcessor {
     private Comparator<String> typeNameComparator = new TypeNameComparator();
     private Comparator<Element> parameterTypeComparator = new ParameterTypeComparator(typeNameComparator);
     private Comparator<List<? extends Element>> parameterListComparator = new ListComparator<>(parameterTypeComparator);
