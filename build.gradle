@@ -1,0 +1,56 @@
+import org.gradle.api.JavaVersion
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+ext {
+    vendor = [name: 'Dale H. Emery', group: 'com.dhemery']
+}
+
+project.description = 'A Java annotation processor that generates utility classes based on specially annotated methods.'
+project.group = vendor.group
+project.version = "1.0.0"
+
+task sourcesJar(type: Jar) {
+    description = 'Assembles a jar containing the main sources.'
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+tasks.javadoc {
+    options.links "http://docs.oracle.com/javase/8/docs/api/"
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    description = 'Assembles a jar containing the javadoc documentation.'
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+tasks.install.dependsOn clean, test
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+tasks.jar {
+    manifest {
+        attributes(
+                "Implementation-Title": project.description,
+                "Implementation-Version": project.version,
+                "Implementation-Vendor": vendor.name
+        )
+    }
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.13'
+}
