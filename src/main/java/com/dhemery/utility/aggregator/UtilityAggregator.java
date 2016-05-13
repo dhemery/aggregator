@@ -4,7 +4,7 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
-import javax.tools.Diagnostic;
+import javax.lang.model.util.Types;
 import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
@@ -31,22 +31,22 @@ import static java.util.stream.Collectors.toSet;
  * </ul>
  */
 public class UtilityAggregator extends AbstractProcessor {
+    static Elements elements;
+    static Types types;
     private final Class<?>[] supportedAnnotationTypes = { SpecifiesAggregatedUtilityClass.class };
-    private Filer filer;
-    private Elements elements;
 
     public UtilityAggregator(){}
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        filer = processingEnv.getFiler();
         elements = processingEnv.getElementUtils();
+        types = processingEnv.getTypeUtils();
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotationTypes, RoundEnvironment environment) {
-        round(environment).utilityClasses().forEach(c -> c.write(filer));
+        round(environment).utilityClasses().forEach(this::write);
         return true;
     }
 
@@ -61,6 +61,10 @@ public class UtilityAggregator extends AbstractProcessor {
     }
 
     private Round round(RoundEnvironment environment) {
-        return new Round(environment, elements);
+        return new Round(environment);
+    }
+
+    private void write(UtilityClass utilityClass) {
+        utilityClass.write(processingEnv.getFiler());
     }
 }

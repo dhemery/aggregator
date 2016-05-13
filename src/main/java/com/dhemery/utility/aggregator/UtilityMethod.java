@@ -2,7 +2,6 @@ package com.dhemery.utility.aggregator;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collector;
@@ -24,7 +23,7 @@ class UtilityMethod implements Comparable<UtilityMethod> {
     private final List<? extends VariableElement> parameters;
     private final List<? extends TypeMirror> thrownTypes;
 
-    UtilityMethod(ExecutableElement methodElement, Elements elements) {
+    UtilityMethod(ExecutableElement methodElement) {
         declaringClass = methodElement.getEnclosingElement().toString();
         modifiers = methodElement.getModifiers();
         typeParameters = methodElement.getTypeParameters();
@@ -32,7 +31,7 @@ class UtilityMethod implements Comparable<UtilityMethod> {
         identifier = methodElement.getSimpleName().toString();
         parameters = methodElement.getParameters();
         thrownTypes = methodElement.getThrownTypes();
-        comment = Comment.forMethod(elements.getDocComment(methodElement));
+        comment = Comment.forMethod(UtilityAggregator.elements.getDocComment(methodElement));
     }
 
     void write(PrintWriter out) {
