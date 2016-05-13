@@ -6,7 +6,6 @@ import javax.lang.model.type.TypeVisitor;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collector;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;

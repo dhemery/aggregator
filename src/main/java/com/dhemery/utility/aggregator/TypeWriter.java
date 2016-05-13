@@ -2,9 +2,9 @@ package com.dhemery.utility.aggregator;
 
 import javax.lang.model.type.*;
 import javax.lang.model.util.SimpleTypeVisitor8;
-import java.util.List;
+import java.util.*;
 
-public class TypeWriter extends SimpleTypeVisitor8<List<String>,List<String>> {
+class TypeWriter extends SimpleTypeVisitor8<List<String>,List<String>> {
     @Override
     protected List<String> defaultAction(TypeMirror e, List<String> strings) {
         return strings;
@@ -48,7 +48,14 @@ public class TypeWriter extends SimpleTypeVisitor8<List<String>,List<String>> {
 
     @Override
     public List<String> visitTypeVariable(TypeVariable t, List<String> strings) {
-        return t.getUpperBound().accept(this, strings);
+        strings.add(t.toString());
+        Optional.of(t.getUpperBound())
+                .filter(b -> !Object.class.getName().equals(b.toString()))
+                .ifPresent( b -> {
+                    strings.add(" extends ");
+                    b.accept(this, strings);
+                });
+        return strings;
     }
 
     @Override

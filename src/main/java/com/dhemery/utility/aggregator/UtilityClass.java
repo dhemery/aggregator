@@ -2,7 +2,7 @@ package com.dhemery.utility.aggregator;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.*;
-import javax.tools.*;
+import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;

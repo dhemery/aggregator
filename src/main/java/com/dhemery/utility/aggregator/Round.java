@@ -1,12 +1,9 @@
 package com.dhemery.utility.aggregator;
 
-import javax.annotation.processing.*;
-import javax.lang.model.element.*;
-import javax.lang.model.util.Elements;
-import java.util.*;
+import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toSet;
 
 /**
  * Represents the information supplied by the Java compiler
