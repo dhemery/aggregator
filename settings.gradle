@@ -1,0 +1,3 @@
+include 'example'
+findProject(':example')?.name = 'utility-aggregator-example'
+

@@ -1,0 +1,39 @@
+group 'com.dhemery'
+version '1.0.0'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+}
+
+project.dependencies {
+    compile 'com.dhemery:utility-aggregator:1.0.0'
+}
+
+tasks.javadoc {
+    options.addStringOption('sourcepath', "$System.env.JAVA_HOME/src")
+}
+
+def generatedSources = "$buildDir/generated-src"
+def generatedOutputDir = file("$generatedSources")
+
+tasks.compileJava {
+    doFirst {
+        generatedOutputDir.exists() || generatedOutputDir.mkdirs()
+        System.out.println "made the dir dagnabbit"
+        options.compilerArgs = [
+                '-s', "${generatedSources}"
+        ]
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += generatedOutputDir
+        }
+    }
+}

@@ -5,6 +5,11 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.tools.Diagnostic;
+import java.awt.print.Printable;
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
@@ -46,7 +51,16 @@ public class UtilityAggregator extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotationTypes, RoundEnvironment environment) {
-        round(environment).utilityClasses().forEach(this::write);
+        try {
+            round(environment).utilityClasses().forEach(this::write);
+        } catch (Throwable cause) {
+            StringWriter trace = new StringWriter();
+            PrintWriter out = new PrintWriter(trace);
+            cause.printStackTrace(out);
+            out.close();
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Threw: " + cause + "\n" + trace.toString());
+            throw cause;
+        }
         return true;
     }
 
