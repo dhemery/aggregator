@@ -1,6 +1,6 @@
 package com.dhemery;
 
-public class SomeClassFile {
+public class ExampleUtilityMethods {
     @UtilityMarker
     public static Object returnsObject() { return null; }
 

@@ -63,7 +63,7 @@ class UtilityMethod implements Comparable<UtilityMethod> {
     private String exceptions() {
         return thrownTypes.stream()
                        .map(String::valueOf)
-                       .collect(joiningOrEmpty(", ", "throws ", " "));
+                       .collect(Joining.orEmpty(", ", "throws ", " "));
     }
 
     private String formalParameterList() {
@@ -86,7 +86,7 @@ class UtilityMethod implements Comparable<UtilityMethod> {
     private String typeParameters() {
         return typeParameters.stream()
                        .map(toElementDeclaration())
-                       .collect(joiningOrEmpty(", ", "<", "> "));
+                       .collect(Joining.orEmpty(", ", "<", "> "));
     }
 
     private Function<? super Element, String> toElementDeclaration() {
@@ -97,15 +97,6 @@ class UtilityMethod implements Comparable<UtilityMethod> {
 
     private ElementVisitor<List<String>,List<String>> elementWriter() {
         return new ElementWriter(typeWriter);
-    }
-
-    private Collector<String, ?, String> joiningOrEmpty(CharSequence delimiter, CharSequence prefix, String suffix) {
-        return Collector.of(
-                () -> new StringJoiner(delimiter, prefix, suffix).setEmptyValue(""),
-                StringJoiner::add,
-                StringJoiner::merge,
-                String::valueOf
-        );
     }
 
     @Override
