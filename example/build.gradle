@@ -23,7 +23,6 @@ def generatedOutputDir = file("$generatedSources")
 tasks.compileJava {
     doFirst {
         generatedOutputDir.exists() || generatedOutputDir.mkdirs()
-        System.out.println "made the dir dagnabbit"
         options.compilerArgs = [
                 '-s', "${generatedSources}"
         ]

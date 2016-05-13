@@ -2,8 +2,10 @@ package com.dhemery.utility.aggregator;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVisitor;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collector;
 
 import static java.lang.String.format;
@@ -17,17 +19,18 @@ class UtilityMethod implements Comparable<UtilityMethod> {
     private final String comment;
     private final List<? extends TypeParameterElement> typeParameters;
     private final Set<Modifier> modifiers;
-    private final String result;
+    private final TypeMirror result;
     private final String declaringClass;
     private final String identifier;
     private final List<? extends VariableElement> parameters;
     private final List<? extends TypeMirror> thrownTypes;
+    private final TypeVisitor<List<String>, List<String>> typeWriter = new TypeWriter();
 
     UtilityMethod(ExecutableElement methodElement) {
         declaringClass = methodElement.getEnclosingElement().toString();
         modifiers = methodElement.getModifiers();
         typeParameters = methodElement.getTypeParameters();
-        result = methodElement.getReturnType().toString();
+        result = methodElement.getReturnType();
         identifier = methodElement.getSimpleName().toString();
         parameters = methodElement.getParameters();
         thrownTypes = methodElement.getThrownTypes();
@@ -35,7 +38,8 @@ class UtilityMethod implements Comparable<UtilityMethod> {
     }
 
     void write(PrintWriter out) {
-        out.format("%n%s", comment)
+        out.format("%n%s", Describe.the(result));
+        out.format("%s", comment)
                 .format("%n    %s %s%s %s(%s) %s{",
                         modifier(),
                         typeParameters(),
@@ -81,8 +85,18 @@ class UtilityMethod implements Comparable<UtilityMethod> {
 
     private String typeParameters() {
         return typeParameters.stream()
-                       .map(String::valueOf)
+                       .map(toElementDeclaration())
                        .collect(joiningOrEmpty(", ", "<", "> "));
+    }
+
+    private Function<? super Element, String> toElementDeclaration() {
+        return t -> t.accept(elementWriter(), new ArrayList<>())
+                            .stream()
+                            .collect(joining());
+    }
+
+    private ElementVisitor<List<String>,List<String>> elementWriter() {
+        return new ElementWriter(typeWriter);
     }
 
     private Collector<String, ?, String> joiningOrEmpty(CharSequence delimiter, CharSequence prefix, String suffix) {
