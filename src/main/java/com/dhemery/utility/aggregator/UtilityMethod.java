@@ -60,7 +60,7 @@ class UtilityMethod implements Comparable<UtilityMethod> {
 
     private String exceptions() {
         return thrownTypes.stream()
-                       .map(String::valueOf)
+                       .map(typeWriter::declare)
                        .collect(Joining.orEmpty(", ", "throws ", " "));
     }
 

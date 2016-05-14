@@ -1,5 +1,6 @@
 package com.dhemery;
 
+import java.io.IOException;
 import java.util.function.Function;
 
 public class
@@ -15,4 +16,7 @@ ExampleUtilityMethods {
 
     @UtilityMarker
     public static <T,R> R hasParametersWithGenericTypes(Function<? super T, ? extends R> function) { return null; }
+
+    @UtilityMarker
+    public static Object throwsIOException() throws IOException { return null; }
 }
