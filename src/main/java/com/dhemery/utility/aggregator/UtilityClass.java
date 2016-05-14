@@ -24,15 +24,23 @@ class UtilityClass {
     }
 
     void write(Filer filer) {
+        TypeSpy spy = new TypeSpy();
+        Set<String> imports = new HashSet<>();
+        utilityMethods().forEach(m -> m.methodElement.asType().accept(spy, imports::add));
         PrintWriter out = printWriter(filer);
-        out.format("package %s;%n%n", packageName())
-                .format("%s%n", comment())
+        out
+                .format("package %s;%n%n", packageName());
+        imports.stream()
+                .sorted()
+                .forEach(i -> out.format("import %s;%n", i));
+        out
+                .format("%n%s", comment())
                 .format("%s%n", generator())
                 .format("public class %s {", simpleName());
-        utilityMethods()
-                .sorted()
+        utilityMethods().sorted()
                 .forEach(m -> m.write(out));
-        out.format("}")
+        out
+                .format("}")
                 .close();
     }
 

@@ -3,7 +3,7 @@ package com.dhemery.utility.aggregator;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.*;
 
 import static com.dhemery.utility.aggregator.UtilityAggregator.elements;
 import static java.lang.String.format;
@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.joining;
  * Represents a method annotated by a utility annotation.
  */
 class UtilityMethod implements Comparable<UtilityMethod> {
-    private final ExecutableElement methodElement;
+    final ExecutableElement methodElement;
     private final TypeWriter typeWriter = new TypeWriter();
 
     UtilityMethod(ExecutableElement methodElement) {
@@ -22,7 +22,8 @@ class UtilityMethod implements Comparable<UtilityMethod> {
     }
 
     void write(PrintWriter out) {
-        out.format("%n%s", comment())
+        out
+                .format("%n%s", comment())
                 .format("    %s%s %s %s(%s)%s {%n", modifiers(), typeParameters(), returnType(), identifier(), parameters(), exceptions())
                 .format("        %s%s.%s(%s);%n", statement(), className(), identifier(), arguments())
                 .format("    }%n");

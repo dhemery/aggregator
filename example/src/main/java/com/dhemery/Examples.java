@@ -26,7 +26,7 @@ public class Examples {
     }
 
     @Example
-    public static Object throwsIOException() throws IOException, NullPointerException {
+    public static Object throwsExceptions() throws IOException, NullPointerException {
         return null;
     }
 
