@@ -2,10 +2,8 @@ package com.dhemery.utility.aggregator;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVisitor;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.function.Function;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
@@ -23,7 +21,8 @@ class UtilityMethod implements Comparable<UtilityMethod> {
     private final String identifier;
     private final List<? extends VariableElement> parameters;
     private final List<? extends TypeMirror> thrownTypes;
-    private final TypeVisitor<List<String>, List<String>> typeWriter = new TypeWriter();
+    private final TypeWriter typeWriter = new TypeWriter();
+    private final ElementWriter elementWriter = new ElementWriter(typeWriter);
 
     UtilityMethod(ExecutableElement methodElement) {
         declaringClass = methodElement.getEnclosingElement().toString();
@@ -84,18 +83,8 @@ class UtilityMethod implements Comparable<UtilityMethod> {
 
     private String typeParameters() {
         return typeParameters.stream()
-                       .map(toElementDeclaration())
+                       .map(elementWriter::declare)
                        .collect(Joining.orEmpty(", ", "<", "> "));
-    }
-
-    private Function<? super Element, String> toElementDeclaration() {
-        return t -> t.accept(elementWriter(), new ArrayList<>())
-                            .stream()
-                            .collect(joining());
-    }
-
-    private ElementVisitor<List<String>,List<String>> elementWriter() {
-        return new ElementWriter(typeWriter);
     }
 
     @Override

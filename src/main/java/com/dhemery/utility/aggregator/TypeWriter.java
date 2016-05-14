@@ -2,69 +2,75 @@ package com.dhemery.utility.aggregator;
 
 import javax.lang.model.type.*;
 import javax.lang.model.util.SimpleTypeVisitor8;
-import java.util.*;
+import java.util.Optional;
 
-class TypeWriter extends SimpleTypeVisitor8<List<String>,List<String>> {
-    @Override
-    protected List<String> defaultAction(TypeMirror e, List<String> strings) {
-        return strings;
+class TypeWriter extends SimpleTypeVisitor8<StringBuilder, StringBuilder> {
+    String declare(TypeMirror type) {
+        return type.accept(this, new StringBuilder()).toString();
     }
 
     @Override
-    public List<String> visitArray(ArrayType t, List<String> strings) {
-        return strings;
+    protected StringBuilder defaultAction(TypeMirror e, StringBuilder declaration) {
+        return declaration;
     }
 
     @Override
-    public List<String> visitDeclared(DeclaredType t, List<String> strings) {
-        strings.add(String.valueOf(t));
-        return strings;
+    public StringBuilder visitArray(ArrayType t, StringBuilder declaration) {
+        return declaration;
     }
 
     @Override
-    public List<String> visitError(ErrorType t, List<String> strings) {
-        return strings;
+    public StringBuilder visitDeclared(DeclaredType t, StringBuilder declaration) {
+        return declaration.append(String.valueOf(t));
     }
 
     @Override
-    public List<String> visitExecutable(ExecutableType t, List<String> strings) {
-        return strings;
+    public StringBuilder visitError(ErrorType t, StringBuilder declaration) {
+        return declaration;
     }
 
     @Override
-    public List<String> visitNoType(NoType t, List<String> strings) {
-        return strings;
+    public StringBuilder visitExecutable(ExecutableType t, StringBuilder declaration) {
+        return declaration;
     }
 
     @Override
-    public List<String> visitNull(NullType t, List<String> strings) {
-        return strings;
+    public StringBuilder visitNoType(NoType t, StringBuilder declaration) {
+        return declaration;
     }
 
     @Override
-    public List<String> visitPrimitive(PrimitiveType t, List<String> strings) {
-        return strings;
+    public StringBuilder visitNull(NullType t, StringBuilder declaration) {
+        return declaration;
     }
 
     @Override
-    public List<String> visitTypeVariable(TypeVariable t, List<String> strings) {
-        strings.add(t.toString());
-        Optional.of(t.getUpperBound())
-                .filter(b -> !Object.class.getName().equals(b.toString()))
-                .ifPresent( b -> {
-                    strings.add(" extends ");
-                    b.accept(this, strings);
-                });
-        return strings;
+    public StringBuilder visitPrimitive(PrimitiveType t, StringBuilder declaration) {
+        return declaration;
     }
 
     @Override
-    public List<String> visitUnknown(TypeMirror t, List<String> strings) {
-        return strings;
+    public StringBuilder visitTypeVariable(TypeVariable t, StringBuilder declaration) {
+        return declaration
+                       .append(t)
+                       .append(bound(t.getUpperBound(), " extends "));
     }
 
     @Override
-    public List<String> visitWildcard(WildcardType t, List<String> strings) {
-        return strings;
+    public StringBuilder visitUnknown(TypeMirror t, StringBuilder declaration) {
+        return declaration;
+    }
+
+    @Override
+    public StringBuilder visitWildcard(WildcardType t, StringBuilder declaration) {
+        return declaration;
+    }
+
+    private String bound(TypeMirror bound, String prefix) {
+        return Optional.of(bound)
+                       .filter(b -> !Object.class.getName().equals(b.toString()))
+                       .map(b -> b.accept(this, new StringBuilder().append(prefix)))
+                       .map(String::valueOf)
+                       .orElse("");
     }
 }
