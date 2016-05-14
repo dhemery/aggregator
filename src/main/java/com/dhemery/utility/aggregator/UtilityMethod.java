@@ -15,16 +15,15 @@ import static java.util.stream.Collectors.joining;
  */
 class UtilityMethod implements Comparable<UtilityMethod> {
     final ExecutableElement methodElement;
-    private final TypeWriter typeWriter = new TypeWriter();
 
     UtilityMethod(ExecutableElement methodElement) {
         this.methodElement = methodElement;
     }
 
-    void write(PrintWriter out) {
+    void write(PrintWriter out, TypeWriter typeWriter) {
         out
                 .format("%n%s", comment())
-                .format("    %s%s %s %s(%s)%s {%n", modifiers(), typeParameters(), returnType(), identifier(), parameters(), exceptions())
+                .format("    %s%s %s %s(%s)%s {%n", modifiers(), typeParameters(typeWriter), returnType(), identifier(), parameters(), exceptions(typeWriter))
                 .format("        %s%s.%s(%s);%n", statement(), className(), identifier(), arguments())
                 .format("    }%n");
     }
@@ -53,7 +52,7 @@ class UtilityMethod implements Comparable<UtilityMethod> {
                        .compare(this, other);
     }
 
-    private String exceptions() {
+    private String exceptions(TypeWriter typeWriter) {
         List<? extends TypeMirror> exceptions = methodElement.getThrownTypes();
         if (exceptions.isEmpty()) return "";
         return exceptions.stream()
@@ -87,7 +86,7 @@ class UtilityMethod implements Comparable<UtilityMethod> {
         return returnType().toString().equals("void") ? "" : "return ";
     }
 
-    private String typeParameters() {
+    private String typeParameters(TypeWriter typeWriter) {
         List<? extends TypeParameterElement> typeParameters = methodElement.getTypeParameters();
         if (typeParameters.isEmpty()) return "";
         return typeParameters.stream()

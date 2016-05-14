@@ -5,8 +5,11 @@ import javax.lang.model.util.SimpleTypeVisitor8;
 import java.util.Optional;
 
 class TypeWriter extends SimpleTypeVisitor8<StringBuilder, StringBuilder> {
-    TypeWriter() {
+    private final TypeMapper typeMapper;
+
+    TypeWriter(TypeMapper typeMapper) {
         super(new StringBuilder().append("bogus"));
+        this.typeMapper = typeMapper;
     }
 
     String declare(TypeMirror type) {
@@ -15,7 +18,7 @@ class TypeWriter extends SimpleTypeVisitor8<StringBuilder, StringBuilder> {
 
     @Override
     public StringBuilder visitDeclared(DeclaredType t, StringBuilder declaration) {
-        return declaration.append(String.valueOf(t));
+        return declaration.append(typeMapper.apply(t));
     }
 
     @Override

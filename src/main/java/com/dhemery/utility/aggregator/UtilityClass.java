@@ -6,6 +6,7 @@ import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -25,20 +26,19 @@ class UtilityClass {
 
     void write(Filer filer) {
         TypeSpy spy = new TypeSpy();
-        Set<String> imports = new HashSet<>();
-        utilityMethods().forEach(m -> m.methodElement.asType().accept(spy, imports::add));
+        Set<String> types = new HashSet<>();
+        utilityMethods().forEach(m -> m.methodElement.asType().accept(spy, types::add));
+        TypeMapper typeMapper = new TypeMapper(types);
+
         PrintWriter out = printWriter(filer);
         out
-                .format("package %s;%n%n", packageName());
-        imports.stream()
-                .sorted()
-                .forEach(i -> out.format("import %s;%n", i));
-        out
+                .format("package %s;%n%n", packageName())
+                .format(typeMapper.imports())
                 .format("%n%s", comment())
                 .format("%s%n", generator())
-                .format("public class %s {", simpleName());
+                .format("public class %s {", simpleClassName());
         utilityMethods().sorted()
-                .forEach(m -> m.write(out));
+                .forEach(m -> m.write(out, new TypeWriter(typeMapper)));
         out
                 .format("}")
                 .close();
@@ -84,16 +84,12 @@ class UtilityClass {
         return packageName(utilityClassName());
     }
 
-    private String packageName(String fullyQualifiedClassName) {
-        return fullyQualifiedClassName.substring(0, fullyQualifiedClassName.lastIndexOf('.'));
+    private String packageName(String qualifiedName) {
+        return qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
     }
 
-    private String simpleName() {
-        return simpleName(utilityClassName());
-    }
-
-    private String simpleName(String fullyQualifiedClassName) {
-        return fullyQualifiedClassName.substring(fullyQualifiedClassName.lastIndexOf('.') + 1);
+    private String simpleClassName() {
+        return TypeMapper.simpleName(utilityClassName());
     }
 
     private PrintWriter printWriter(Filer filer) {
