@@ -25,6 +25,7 @@ class ElementWriter extends SimpleElementVisitor8<StringBuilder, StringBuilder> 
     public StringBuilder visitExecutable(ExecutableElement e, StringBuilder declaration) {
         declareModifiers(e.getModifiers(), declaration);
         declareTypeParameters(e.getTypeParameters(), declaration);
+        declaration.append(format("%s ", e.getReturnType()));
         return declaration;
     }
 
@@ -39,7 +40,6 @@ class ElementWriter extends SimpleElementVisitor8<StringBuilder, StringBuilder> 
 
     private void declareModifiers(Set<Modifier> modifiers, StringBuilder declaration) {
         modifiers.stream()
-                .map(String::valueOf)
                 .forEach(m -> declaration.append(format("%s ", m)));
     }
 

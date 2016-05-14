@@ -15,14 +15,12 @@ import static java.util.stream.Collectors.joining;
 class UtilityMethod implements Comparable<UtilityMethod> {
     private final String comment;
     private final ExecutableElement methodElement;
-    private final List<? extends TypeParameterElement> typeParameters;
     private final List<? extends VariableElement> parameters;
     private final List<? extends TypeMirror> thrownTypes;
     private final TypeWriter typeWriter = new TypeWriter();
     private final ElementWriter elementWriter = new ElementWriter(typeWriter);
 
     UtilityMethod(ExecutableElement methodElement) {
-        typeParameters = methodElement.getTypeParameters();
         parameters = methodElement.getParameters();
         thrownTypes = methodElement.getThrownTypes();
         comment = Comment.forMethod(UtilityAggregator.elements.getDocComment(methodElement));
@@ -32,9 +30,8 @@ class UtilityMethod implements Comparable<UtilityMethod> {
     void write(PrintWriter out) {
         out.format("%n%s", Describe.the(methodElement.getReturnType()));
         out.format("%s", comment)
-                .format("%n    %s%s %s(%s) %s{",
+                .format("%n    %s %s(%s) %s{",
                         elementWriter.declare(methodElement),
-                        methodElement.getReturnType(),
                         methodElement.getSimpleName(),
                         formalParameterList(),
                         exceptions())
