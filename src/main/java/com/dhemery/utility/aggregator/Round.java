@@ -17,7 +17,7 @@ class Round {
     }
 
     Stream<UtilityClass> utilityClasses() {
-        return roundEnvironment.getElementsAnnotatedWith(SpecifiesAggregatedUtilityClass.class).stream()
+        return roundEnvironment.getElementsAnnotatedWith(Aggregate.class).stream()
                        .map(TypeElement.class::cast)
                        .map(a -> new UtilityClass(a, this));
     }

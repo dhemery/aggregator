@@ -33,10 +33,10 @@
  * <strong>Utility Annotation.</strong>
  * A <em>utility annotation</em> is any annotation
  * that is itself annotated with
- * the {@link com.dhemery.utility.aggregator.SpecifiesAggregatedUtilityClass} meta-annotation.
+ * the {@link com.dhemery.utility.aggregator.Aggregate} meta-annotation.
  * All of the methods annotated by a single utility annotation
  * will be aggregated into a single utility class.
- * The {@code SpecifiesAggregatedUtilityClass} specifies
+ * The {@code Aggregate} specifies
  * the name of the utility class to generate.
  * <p>
  * <strong>Using the Utility Aggregator</strong>
@@ -63,7 +63,7 @@
  * <ul>
  * <li>
  * Each time the compiler encounters a utility annotation
- * (an annotation that you have annotated with {@code SpecifiesAggregatedUtilityClass}),
+ * (an annotation that you have annotated with {@code Aggregate}),
  * it notifies the Utility Aggregator.
  * </li>
  * <li>

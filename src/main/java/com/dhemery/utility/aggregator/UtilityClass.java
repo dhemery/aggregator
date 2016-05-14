@@ -25,11 +25,10 @@ class UtilityClass {
 
     void write(Filer filer) {
         PrintWriter out = printWriter(filer);
-        out.format("package %s;", packageName())
-                .format("%n%n%s", comment())
-                .format("%n%s", generator())
-                .format("%npublic class %s {", simpleName())
-                .format("%nprivate %s(){}", simpleName());
+        out.format("package %s;%n%n", packageName())
+                .format("%s%n", comment())
+                .format("%s%n", generator())
+                .format("public class %s {", simpleName());
         utilityMethods()
                 .sorted()
                 .forEach(m -> m.write(out));
@@ -38,15 +37,15 @@ class UtilityClass {
     }
 
     private String comment() {
-        return Comment.forClass(classSpecifier().utilityClassComment());
+        return Comment.forClass(classSpecifier().classComment());
     }
 
-    private SpecifiesAggregatedUtilityClass classSpecifier() {
-        return utilityAnnotation.getAnnotation(SpecifiesAggregatedUtilityClass.class);
+    private Aggregate classSpecifier() {
+        return utilityAnnotation.getAnnotation(Aggregate.class);
     }
 
     private String utilityClassName() {
-        return classSpecifier().utilityClassName();
+        return classSpecifier().className();
     }
 
     private Stream<UtilityMethod> utilityMethods() {
@@ -70,7 +69,7 @@ class UtilityClass {
     }
 
     private String generatorName() {
-        return SpecifiesAggregatedUtilityClass.class.getName();
+        return Aggregate.class.getName();
     }
 
     private String packageName() {
@@ -95,7 +94,7 @@ class UtilityClass {
             JavaFileObject sourceFile = filer.createSourceFile(utilityClassName);
             return new PrintWriter(sourceFile.openWriter());
         } catch (IOException cause) {
-            throw new UtilityAggregatorException(utilityClassName, utilityAnnotationName(), cause);
+            throw new UtilityAggregatorException(utilityClassName(), utilityAnnotationName(), cause);
         }
     }
 

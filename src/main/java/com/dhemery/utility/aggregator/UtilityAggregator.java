@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toSet;
  * <p>
  * A <strong>utility annotation</strong>
  * is an annotation annotated by
- * the {@link SpecifiesAggregatedUtilityClass} meta-annotation.
+ * the {@link Aggregate} meta-annotation.
  * <p>
  * For each utility annotation,
  * this processor generates a Java source file.
@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toSet;
 public class UtilityAggregator extends AbstractProcessor {
     static Elements elements;
     static Types types;
-    private final Class<?>[] supportedAnnotationTypes = { SpecifiesAggregatedUtilityClass.class };
+    private final Class<?>[] supportedAnnotationTypes = { Aggregate.class };
 
     public UtilityAggregator(){}
 
@@ -57,7 +57,7 @@ public class UtilityAggregator extends AbstractProcessor {
             PrintWriter out = new PrintWriter(trace);
             cause.printStackTrace(out);
             out.close();
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Threw: " + cause + "\n" + trace.toString());
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Threw: " + cause + "\n" + cause.getMessage() + "\n" + trace.toString());
             throw cause;
         }
         return true;

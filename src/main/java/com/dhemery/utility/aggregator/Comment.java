@@ -11,7 +11,7 @@ import static java.util.stream.Collectors.joining;
 class Comment {
     private static final java.lang.String CONTENT_LINE = "%n%1s * ";
     private static final java.lang.String OPEN = "%1$s/**" + CONTENT_LINE;
-    private static final java.lang.String CLOSE = "%n%1s */";
+    private static final java.lang.String CLOSE = "%n%1s */%n";
     private final String source;
     private final String open;
     private final String contentLine;
@@ -40,11 +40,7 @@ class Comment {
         return withPrefix(commentText, "");
     }
 
-    static String forMethod(String commentText) {
-        return withPrefix(commentText, "    ");
-    }
-
-    private static String withPrefix(String commentText, String prefix) {
+    static String withPrefix(String commentText, String prefix) {
         return new Comment(commentText, prefix).toString();
     }
 }

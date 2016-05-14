@@ -1,5 +1,8 @@
 package com.dhemery.utility.aggregator;
 
+import javax.lang.model.element.TypeElement;
+import java.io.IOException;
+
 import static java.lang.String.format;
 
 @SuppressWarnings("WeakerAccess")

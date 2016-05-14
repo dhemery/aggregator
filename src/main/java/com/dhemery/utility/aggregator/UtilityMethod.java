@@ -3,8 +3,9 @@ package com.dhemery.utility.aggregator;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.List;
 
+import static com.dhemery.utility.aggregator.UtilityAggregator.elements;
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
@@ -13,68 +14,84 @@ import static java.util.stream.Collectors.joining;
  * Represents a method annotated by a utility annotation.
  */
 class UtilityMethod implements Comparable<UtilityMethod> {
-    private final String comment;
     private final ExecutableElement methodElement;
-    private final List<? extends VariableElement> parameters;
-    private final List<? extends TypeMirror> thrownTypes;
     private final TypeWriter typeWriter = new TypeWriter();
-    private final ElementWriter elementWriter = new ElementWriter(typeWriter);
 
     UtilityMethod(ExecutableElement methodElement) {
-        parameters = methodElement.getParameters();
-        thrownTypes = methodElement.getThrownTypes();
-        comment = Comment.forMethod(UtilityAggregator.elements.getDocComment(methodElement));
         this.methodElement = methodElement;
     }
 
     void write(PrintWriter out) {
-        out.format("%n%s", Describe.the(methodElement.getReturnType()));
-        out.format("%s", comment)
-                .format("%n    %s %s(%s) %s{",
-                        elementWriter.declare(methodElement),
-                        methodElement.getSimpleName(),
-                        formalParameterList(),
-                        exceptions())
-                .format("%n        return %s.%s(%s);",
-                        methodElement.getEnclosingElement(),
-                        methodElement.getSimpleName(),
-                        argumentList())
-        .format("%n    }%n");
+        out.format("%n%s", comment())
+                .format("    %s%s %s %s(%s)%s {%n", modifiers(), typeParameters(), returnType(), identifier(), parameters(), exceptions())
+                .format("        %s%s.%s(%s);%n", statement(), className(), identifier(), arguments())
+                .format("    }%n");
     }
 
-    private String argumentList() {
+    private String arguments() {
+        List<? extends VariableElement> parameters = methodElement.getParameters();
+        if (parameters.isEmpty()) return "";
         return parameters.stream()
                        .map(String::valueOf)
                        .collect(joining(", "));
+
     }
 
-    private String exceptions() {
-        return thrownTypes.stream()
-                       .map(typeWriter::declare)
-                       .collect(Joining.orEmpty(", ", "throws ", " "));
+    private Element className() {
+        return methodElement.getEnclosingElement();
     }
 
-    private String formalParameterList() {
-        return parameters.stream()
-                       .map(p -> format("%s %s", p.asType(), p.getSimpleName()))
-                       .collect(joining(", "));
-    }
-
-
-    public String simpleName() {
-        return methodElement.getSimpleName().toString();
+    private String comment() {
+        return Comment.withPrefix(elements.getDocComment(methodElement), "    ");
     }
 
     @Override
     public int compareTo(UtilityMethod other) {
-        return comparing(UtilityMethod::simpleName)
-                       .thenComparing(UtilityMethod::parameterTypeNames)
+        return comparing(UtilityMethod::identifier)
+                       .thenComparing(UtilityMethod::arguments)
                        .compare(this, other);
     }
 
-    private String parameterTypeNames() {
+    private String exceptions() {
+        List<? extends TypeMirror> exceptions = methodElement.getThrownTypes();
+        if (exceptions.isEmpty()) return "";
+        return exceptions.stream()
+                       .map(typeWriter::declare)
+                       .collect(joining(", ", " throws ", ""));
+    }
+
+    private String identifier() {
+        return methodElement.getSimpleName().toString();
+    }
+
+    private String modifiers() {
+        return methodElement.getModifiers().stream()
+                       .map(String::valueOf)
+                       .collect(joining(" "));
+    }
+
+    private String parameters() {
+        List<? extends VariableElement> parameters = methodElement.getParameters();
+        if (parameters.isEmpty()) return "";
         return parameters.stream()
-                       .map(Element::getSimpleName)
-                       .collect(joining("#"));
+                       .map(a -> format("%s %s", a.asType(), a))
+                       .collect(joining(", "));
+    }
+
+    private TypeMirror returnType() {
+        return methodElement.getReturnType();
+    }
+
+    private String statement() {
+        return returnType().toString().equals("void") ? "" : "return ";
+    }
+
+    private String typeParameters() {
+        List<? extends TypeParameterElement> typeParameters = methodElement.getTypeParameters();
+        if (typeParameters.isEmpty()) return "";
+        return typeParameters.stream()
+                       .map(Element::asType)
+                       .map(t -> t.accept(typeWriter, new StringBuilder()))
+                       .collect(joining(",", " <", ">"));
     }
 }
