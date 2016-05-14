@@ -14,40 +14,33 @@ import static java.util.stream.Collectors.joining;
  */
 class UtilityMethod implements Comparable<UtilityMethod> {
     private final String comment;
+    private final ExecutableElement methodElement;
     private final List<? extends TypeParameterElement> typeParameters;
-    private final Set<Modifier> modifiers;
-    private final TypeMirror result;
-    private final String declaringClass;
-    private final String identifier;
     private final List<? extends VariableElement> parameters;
     private final List<? extends TypeMirror> thrownTypes;
     private final TypeWriter typeWriter = new TypeWriter();
     private final ElementWriter elementWriter = new ElementWriter(typeWriter);
 
     UtilityMethod(ExecutableElement methodElement) {
-        declaringClass = methodElement.getEnclosingElement().toString();
-        modifiers = methodElement.getModifiers();
         typeParameters = methodElement.getTypeParameters();
-        result = methodElement.getReturnType();
-        identifier = methodElement.getSimpleName().toString();
         parameters = methodElement.getParameters();
         thrownTypes = methodElement.getThrownTypes();
         comment = Comment.forMethod(UtilityAggregator.elements.getDocComment(methodElement));
+        this.methodElement = methodElement;
     }
 
     void write(PrintWriter out) {
-        out.format("%n%s", Describe.the(result));
+        out.format("%n%s", Describe.the(methodElement.getReturnType()));
         out.format("%s", comment)
-                .format("%n    %s %s%s %s(%s) %s{",
-                        modifier(),
-                        typeParameters(),
-                        result,
-                        identifier,
+                .format("%n    %s%s %s(%s) %s{",
+                        elementWriter.declare(methodElement),
+                        methodElement.getReturnType(),
+                        methodElement.getSimpleName(),
                         formalParameterList(),
                         exceptions())
                 .format("%n        return %s.%s(%s);",
-                        declaringClass,
-                        identifier,
+                        methodElement.getEnclosingElement(),
+                        methodElement.getSimpleName(),
                         argumentList())
         .format("%n    }%n");
     }
@@ -71,20 +64,8 @@ class UtilityMethod implements Comparable<UtilityMethod> {
     }
 
 
-    private String modifier() {
-        return modifiers.stream()
-                       .map(String::valueOf)
-                       .collect(joining(" "));
-    }
-
-    private String simpleName() {
-        return identifier;
-    }
-
-    private String typeParameters() {
-        return typeParameters.stream()
-                       .map(elementWriter::declare)
-                       .collect(Joining.orEmpty(", ", "<", "> "));
+    public String simpleName() {
+        return methodElement.getSimpleName().toString();
     }
 
     @Override
