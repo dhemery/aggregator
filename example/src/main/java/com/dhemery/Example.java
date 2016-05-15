@@ -1,6 +1,6 @@
 package com.dhemery;
 
-import com.dhemery.utility.aggregator.Aggregate;
+import com.dhemery.aggregator.Aggregate;
 
 import java.lang.annotation.*;
 

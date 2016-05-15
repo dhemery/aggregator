@@ -1,6 +1,6 @@
-package com.dhemery.utility.aggregator.internal;
+package com.dhemery.aggregator.internal;
 
-import com.dhemery.utility.aggregator.Aggregate;
+import com.dhemery.aggregator.Aggregate;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -18,13 +18,13 @@ public class Round {
         this.roundEnvironment = roundEnvironment;
     }
 
-    public Stream<UtilityClass> utilityClasses() {
+    public Stream<AggregateWriter> aggregates() {
         return roundEnvironment.getElementsAnnotatedWith(Aggregate.class).stream()
                        .map(TypeElement.class::cast)
-                       .map(a -> new UtilityClass(a, this));
+                       .map(a -> new AggregateWriter(a, this));
     }
 
-    Stream<? extends Element> elementsAnnotatedWith(TypeElement utilityAnnotation) {
-        return roundEnvironment.getElementsAnnotatedWith(utilityAnnotation).stream();
+    Stream<? extends Element> elementsAnnotatedWith(TypeElement aggregateAnnotation) {
+        return roundEnvironment.getElementsAnnotatedWith(aggregateAnnotation).stream();
     }
 }

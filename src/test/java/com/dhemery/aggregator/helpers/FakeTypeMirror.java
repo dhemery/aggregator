@@ -1,4 +1,4 @@
-package com.dhemery.utility.aggregator.helpers;
+package com.dhemery.aggregator.helpers;
 
 import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.AnnotationMirror;

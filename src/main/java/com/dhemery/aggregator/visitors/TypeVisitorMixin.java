@@ -1,4 +1,4 @@
-package com.dhemery.utility.aggregator.visitors;
+package com.dhemery.aggregator.visitors;
 
 import javax.lang.model.type.*;
 

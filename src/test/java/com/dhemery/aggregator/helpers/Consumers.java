@@ -1,4 +1,4 @@
-package com.dhemery.utility.aggregator.helpers;
+package com.dhemery.aggregator.helpers;
 
 import org.junit.Assert;
 

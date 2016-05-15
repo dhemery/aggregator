@@ -1,8 +1,7 @@
-package com.dhemery.utility.aggregator.internal;
+package com.dhemery.aggregator.internal;
 
 
-import com.dhemery.utility.aggregator.helpers.FakePrimitiveType;
-import com.dhemery.utility.aggregator.internal.MethodWriter;
+import com.dhemery.aggregator.helpers.FakePrimitiveType;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;

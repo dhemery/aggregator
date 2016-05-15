@@ -1,7 +1,8 @@
-package com.dhemery.utility.aggregator.internal;
+package com.dhemery.aggregator.internal;
 
-import com.dhemery.utility.aggregator.visitors.ElementVisitorMixin;
-import com.dhemery.utility.aggregator.visitors.TypeVisitorMixin;
+import com.dhemery.aggregator.Aggregator;
+import com.dhemery.aggregator.visitors.ElementVisitorMixin;
+import com.dhemery.aggregator.visitors.TypeVisitorMixin;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.*;
@@ -9,7 +10,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static com.dhemery.utility.aggregator.UtilityAggregator.elements;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
@@ -105,7 +105,7 @@ class MethodWriter implements ElementVisitorMixin<Void, Consumer<String>>, TypeV
     }
 
     private String commentFor(ExecutableElement method) {
-        return Comment.withPrefix(elements.getDocComment(method), "    ");
+        return Comment.withPrefix(Aggregator.elements.getDocComment(method), "    ");
     }
 
     private String classNameOf(ExecutableElement method) {

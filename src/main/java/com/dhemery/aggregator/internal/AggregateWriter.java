@@ -1,7 +1,7 @@
-package com.dhemery.utility.aggregator.internal;
+package com.dhemery.aggregator.internal;
 
-import com.dhemery.utility.aggregator.Aggregate;
-import com.dhemery.utility.aggregator.UtilityAggregatorException;
+import com.dhemery.aggregator.Aggregate;
+import com.dhemery.aggregator.AggregatorException;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.*;
@@ -14,15 +14,15 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 
 /**
- * Writes a utility class for a given utility annotation.
+ * Writes a class that aggregates methods annotated a given aggregate annotation.
  */
-public class UtilityClass {
+public class AggregateWriter {
     private static final List<Modifier> UTILITY_METHOD_MODIFIERS = Arrays.asList(Modifier.STATIC, Modifier.PUBLIC);
-    private final TypeElement utilityAnnotation;
+    private final TypeElement aggregateAnnotation;
     private final Round round;
 
-    UtilityClass(TypeElement utilityAnnotation, Round round) {
-        this.utilityAnnotation = utilityAnnotation;
+    AggregateWriter(TypeElement aggregateAnnotation, Round round) {
+        this.aggregateAnnotation = aggregateAnnotation;
         this.round = round;
     }
 
@@ -37,11 +37,11 @@ public class UtilityClass {
 
         PrintWriter out = printWriter(filer);
         out
-                .format("package %s;%n%n", packageName())
+                .format("package %s;%n%n", aggregatePackageName())
                 .append(typeMapper.imports())
                 .format("%n%s", comment())
                 .format("%s%n", generator())
-                .format("public class %s {", simpleClassName());
+                .format("public class %s {", aggregateSimpleName());
         methods()
                 .forEach(m -> m.accept(methodWriter, out::append));
         out
@@ -49,23 +49,28 @@ public class UtilityClass {
                 .close();
     }
 
+    private Aggregate aggregate() {
+        return aggregateAnnotation.getAnnotation(Aggregate.class);
+    }
+
+    private String aggregateAnnotationName() {
+        return aggregateAnnotation.getQualifiedName().toString();
+    }
+
+    private String aggregateName() {
+        return aggregate().className();
+    }
+
+    private String aggregatePackageName() {
+        return packageName(aggregateName());
+    }
+
+    private String aggregateSimpleName() {
+        return TypeMapper.simpleName(aggregateName());
+    }
+
     private String comment() {
-        return Comment.forClass(classSpecifier().classComment());
-    }
-
-    private Aggregate classSpecifier() {
-        return utilityAnnotation.getAnnotation(Aggregate.class);
-    }
-
-    private String utilityClassName() {
-        return classSpecifier().className();
-    }
-
-    private Stream<ExecutableElement> methods() {
-        return round.elementsAnnotatedWith(utilityAnnotation)
-                       .filter(annotatedElement -> annotatedElement.getKind() == ElementKind.METHOD)
-                       .filter(methodElement -> methodElement.getModifiers().containsAll(UTILITY_METHOD_MODIFIERS))
-                       .map(ExecutableElement.class::cast);
+        return Comment.forClass(aggregate().classComment());
     }
 
     private String generator() {
@@ -77,36 +82,31 @@ public class UtilityClass {
     }
 
     private String generatorComment() {
-        return format("Utility methods annotated with %s", utilityAnnotationName());
+        return format("Aggregation of methods annotated with %s", aggregateAnnotationName());
     }
 
     private String generatorName() {
         return Aggregate.class.getName();
     }
 
-    private String packageName() {
-        return packageName(utilityClassName());
+    private Stream<ExecutableElement> methods() {
+        return round.elementsAnnotatedWith(aggregateAnnotation)
+                       .filter(annotatedElement -> annotatedElement.getKind() == ElementKind.METHOD)
+                       .filter(methodElement -> methodElement.getModifiers().containsAll(UTILITY_METHOD_MODIFIERS))
+                       .map(ExecutableElement.class::cast);
     }
 
     private String packageName(String qualifiedName) {
         return qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
     }
 
-    private String simpleClassName() {
-        return TypeMapper.simpleName(utilityClassName());
-    }
-
     private PrintWriter printWriter(Filer filer) {
-        String utilityClassName = utilityClassName();
+        String aggregateName = aggregateName();
         try {
-            JavaFileObject sourceFile = filer.createSourceFile(utilityClassName);
+            JavaFileObject sourceFile = filer.createSourceFile(aggregateName);
             return new PrintWriter(sourceFile.openWriter());
         } catch (IOException cause) {
-            throw new UtilityAggregatorException(utilityClassName(), utilityAnnotationName(), cause);
+            throw new AggregatorException(aggregateName(), aggregateAnnotationName(), cause);
         }
-    }
-
-    private String utilityAnnotationName() {
-        return utilityAnnotation.getQualifiedName().toString();
     }
 }

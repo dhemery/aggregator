@@ -1,6 +1,6 @@
-package com.dhemery.utility.aggregator.internal;
+package com.dhemery.aggregator.internal;
 
-import com.dhemery.utility.aggregator.visitors.TypeVisitorMixin;
+import com.dhemery.aggregator.visitors.TypeVisitorMixin;
 
 import javax.lang.model.type.*;
 import java.util.Optional;

@@ -1,7 +1,7 @@
-package com.dhemery.utility.aggregator;
+package com.dhemery.aggregator;
 
-import com.dhemery.utility.aggregator.internal.Round;
-import com.dhemery.utility.aggregator.internal.UtilityClass;
+import com.dhemery.aggregator.internal.Round;
+import com.dhemery.aggregator.internal.AggregateWriter;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -17,18 +17,17 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * Aggregates specially annotated utility methods
- * into utility classes during compilation.
+ * Aggregates specially annotated methods
+ * into aggregate classes during compilation.
  * <p>
- * A <strong>utility annotation</strong>
- * is an annotation annotated by
- * the {@link Aggregate} meta-annotation.
+ * An <strong>aggregate annotation</strong>
+ * is an annotation marked by the {@link Aggregate} meta-annotation.
  * <p>
- * For each utility annotation,
+ * For each aggregate annotation,
  * this processor generates a Java source file.
- * The class is named and documented as specified by the utility annotation.
+ * The class is named and documented as specified by its {@code Aggregate} meta-annotation.
  * <p>
- * For each {@code public static} method marked by a given utility annotation,
+ * For each {@code public static} method marked by a given aggregate annotation,
  * the generated source file includes a method that:
  * <ul>
  * <li>Has the same signature as the annotated method.
@@ -37,12 +36,12 @@ import static java.util.stream.Collectors.toSet;
  * <li>Returns the annotated method's result.
  * </ul>
  */
-public class UtilityAggregator extends AbstractProcessor {
+public class Aggregator extends AbstractProcessor {
     public static Elements elements;
     public static Types types;
     private final Class<?>[] supportedAnnotationTypes = { Aggregate.class };
 
-    public UtilityAggregator(){}
+    public Aggregator(){}
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -54,7 +53,7 @@ public class UtilityAggregator extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotationTypes, RoundEnvironment environment) {
         try {
-            round(environment).utilityClasses().forEach(this::write);
+            round(environment).aggregates().forEach(this::write);
         } catch (Throwable cause) {
             StringWriter trace = new StringWriter();
             PrintWriter out = new PrintWriter(trace);
@@ -80,7 +79,7 @@ public class UtilityAggregator extends AbstractProcessor {
         return new Round(environment);
     }
 
-    private void write(UtilityClass utilityClass) {
-        utilityClass.write(processingEnv.getFiler());
+    private void write(AggregateWriter aggregateWriter) {
+        aggregateWriter.write(processingEnv.getFiler());
     }
 }
