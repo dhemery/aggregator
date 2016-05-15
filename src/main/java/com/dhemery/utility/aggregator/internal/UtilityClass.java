@@ -1,4 +1,7 @@
-package com.dhemery.utility.aggregator;
+package com.dhemery.utility.aggregator.internal;
+
+import com.dhemery.utility.aggregator.Aggregate;
+import com.dhemery.utility.aggregator.UtilityAggregatorException;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.*;
@@ -13,7 +16,7 @@ import static java.lang.String.format;
 /**
  * Writes a utility class for a given utility annotation.
  */
-class UtilityClass {
+public class UtilityClass {
     private static final List<Modifier> UTILITY_METHOD_MODIFIERS = Arrays.asList(Modifier.STATIC, Modifier.PUBLIC);
     private final TypeElement utilityAnnotation;
     private final Round round;
@@ -23,7 +26,7 @@ class UtilityClass {
         this.round = round;
     }
 
-    void write(Filer filer) {
+    public void write(Filer filer) {
         TypeSpy spy = new TypeSpy();
         Set<String> types = new HashSet<>();
         methods()

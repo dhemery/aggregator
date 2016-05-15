@@ -1,8 +1,9 @@
-package com.dhemery.utility.aggregator;
+package com.dhemery.utility.aggregator.internal;
 
 
 import com.dhemery.utility.aggregator.helpers.Consumers;
 import com.dhemery.utility.aggregator.helpers.FakeNoType;
+import com.dhemery.utility.aggregator.internal.MethodWriter;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -16,7 +17,7 @@ public class MethodWriterVisitNoType {
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
     @Mock
-    public Consumer<String> declaration;
+    private Consumer<String> declaration;
     private final MethodWriter writer = new MethodWriter(null);
 
     @Test

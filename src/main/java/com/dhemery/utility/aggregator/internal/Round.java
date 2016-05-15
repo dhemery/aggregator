@@ -1,4 +1,6 @@
-package com.dhemery.utility.aggregator;
+package com.dhemery.utility.aggregator.internal;
+
+import com.dhemery.utility.aggregator.Aggregate;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -9,14 +11,14 @@ import java.util.stream.Stream;
  * Represents the information supplied by the Java compiler
  * about a round of annotation processing.
  */
-class Round {
+public class Round {
     private final RoundEnvironment roundEnvironment;
 
-    Round(RoundEnvironment roundEnvironment) {
+    public Round(RoundEnvironment roundEnvironment) {
         this.roundEnvironment = roundEnvironment;
     }
 
-    Stream<UtilityClass> utilityClasses() {
+    public Stream<UtilityClass> utilityClasses() {
         return roundEnvironment.getElementsAnnotatedWith(Aggregate.class).stream()
                        .map(TypeElement.class::cast)
                        .map(a -> new UtilityClass(a, this));

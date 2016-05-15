@@ -1,7 +1,8 @@
-package com.dhemery.utility.aggregator;
+package com.dhemery.utility.aggregator.internal;
 
 
 import com.dhemery.utility.aggregator.helpers.FakePrimitiveType;
+import com.dhemery.utility.aggregator.internal.MethodWriter;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -23,10 +24,11 @@ public class MethodWriterVisitPrimitiveType {
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
     @Mock
-    public Consumer<String> declaration;
+    private Consumer<String> declaration;
+    private final MethodWriter writer = new MethodWriter(null);
+
     @Parameter
     public TypeKind kind;
-    private final MethodWriter writer = new MethodWriter(null);
 
     @Parameters(name = "{0}")
     public static Collection<TypeKind> types() {

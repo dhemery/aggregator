@@ -1,4 +1,4 @@
-package com.dhemery.utility.aggregator;
+package com.dhemery.utility.aggregator.internal;
 
 import com.dhemery.utility.aggregator.visitors.ElementVisitorMixin;
 import com.dhemery.utility.aggregator.visitors.TypeVisitorMixin;
@@ -13,10 +13,10 @@ import static com.dhemery.utility.aggregator.UtilityAggregator.elements;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
-public class MethodWriter implements ElementVisitorMixin<Void, Consumer<String>>, TypeVisitorMixin<Void, Consumer<String>> {
+class MethodWriter implements ElementVisitorMixin<Void, Consumer<String>>, TypeVisitorMixin<Void, Consumer<String>> {
     private final TypeMapper typeMapper;
 
-    public MethodWriter(TypeMapper typeMapper) {
+    MethodWriter(TypeMapper typeMapper) {
         this.typeMapper = typeMapper;
     }
 

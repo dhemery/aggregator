@@ -1,5 +1,8 @@
 package com.dhemery.utility.aggregator;
 
+import com.dhemery.utility.aggregator.internal.Round;
+import com.dhemery.utility.aggregator.internal.UtilityClass;
+
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
@@ -35,8 +38,8 @@ import static java.util.stream.Collectors.toSet;
  * </ul>
  */
 public class UtilityAggregator extends AbstractProcessor {
-    static Elements elements;
-    static Types types;
+    public static Elements elements;
+    public static Types types;
     private final Class<?>[] supportedAnnotationTypes = { Aggregate.class };
 
     public UtilityAggregator(){}

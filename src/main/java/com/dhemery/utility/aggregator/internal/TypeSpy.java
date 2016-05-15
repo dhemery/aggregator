@@ -1,4 +1,4 @@
-package com.dhemery.utility.aggregator;
+package com.dhemery.utility.aggregator.internal;
 
 import com.dhemery.utility.aggregator.visitors.TypeVisitorMixin;
 

@@ -1,4 +1,4 @@
-package com.dhemery.utility.aggregator;
+package com.dhemery.utility.aggregator.internal;
 
 import java.io.BufferedReader;
 import java.io.StringReader;

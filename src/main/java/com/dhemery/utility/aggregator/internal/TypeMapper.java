@@ -1,4 +1,4 @@
-package com.dhemery.utility.aggregator;
+package com.dhemery.utility.aggregator.internal;
 
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
