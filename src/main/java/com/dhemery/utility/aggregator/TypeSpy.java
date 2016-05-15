@@ -3,11 +3,8 @@ package com.dhemery.utility.aggregator;
 import com.dhemery.utility.aggregator.visitors.TypeVisitorMixin;
 
 import javax.lang.model.type.*;
-import javax.lang.model.util.SimpleTypeVisitor8;
 import java.util.Optional;
 import java.util.function.Consumer;
-
-import static java.lang.String.format;
 
 class TypeSpy implements TypeVisitorMixin<Void, Consumer<String>> {
     @Override

@@ -6,12 +6,11 @@ import com.dhemery.utility.aggregator.helpers.FakeNoType;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
-import org.junit.*;
+import org.junit.Rule;
+import org.junit.Test;
 
 import javax.lang.model.type.*;
 import java.util.function.Consumer;
-
-import static java.lang.String.format;
 
 public class MethodWriterVisitNoType {
     @Rule

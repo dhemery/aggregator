@@ -3,7 +3,6 @@ package com.dhemery.utility.aggregator;
 import com.dhemery.utility.aggregator.visitors.ElementVisitorMixin;
 import com.dhemery.utility.aggregator.visitors.TypeVisitorMixin;
 
-import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.*;
 import javax.lang.model.type.*;
 import java.util.*;

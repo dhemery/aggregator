@@ -3,7 +3,6 @@ package com.dhemery.utility.aggregator;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.util.*;
-import java.util.function.Function;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.groupingBy;

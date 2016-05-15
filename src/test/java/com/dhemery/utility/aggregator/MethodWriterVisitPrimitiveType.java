@@ -12,7 +12,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import javax.lang.model.type.*;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Consumer;

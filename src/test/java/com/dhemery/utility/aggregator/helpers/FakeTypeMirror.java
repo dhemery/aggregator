@@ -4,8 +4,6 @@ import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.type.*;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.util.Collections;
 import java.util.List;
 
 class FakeTypeMirror implements TypeMirror, AnnotatedConstruct {
