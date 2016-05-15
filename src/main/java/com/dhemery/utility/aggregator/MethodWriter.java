@@ -2,8 +2,7 @@ package com.dhemery.utility.aggregator;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.*;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -103,7 +102,7 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
     @Override
     public Void visitPrimitive(PrimitiveType t, Consumer<String> action) {
-        action.accept(format("/* visitPrimitive %s (%s) */", t, t.getClass()));
+        action.accept(format("/*PrimitiveType*/%s", t));
         return null;
     }
 
@@ -145,7 +144,13 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
     @Override
     public Void visitVariable(VariableElement e, Consumer<String> action) {
-        action.accept(format("/*VariableElement*/%s %s", e.asType().toString(), e.getSimpleName()));
+        StringBuilder typeDeclaration = new StringBuilder();
+        TypeMirror type = e.asType();
+        if(type instanceof DeclaredType)
+            type.accept(this, typeDeclaration::append);
+        else
+            typeDeclaration.append(type);
+        action.accept(format("/*VariableElement*/%s %s", typeDeclaration, e.getSimpleName()));
         return null;
     }
 
@@ -165,7 +170,7 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
     private String bound(TypeMirror bound, String prefix) {
         if (bound == null) return "";
-        if (Object.class.getName().equals(bound.toString())) return "";
+        if (Objects.equals(Object.class.getName(), bound.toString())) return "";
         StringBuilder boundType = new StringBuilder();
         bound.accept(this, boundType::append);
         return format(" %s %s", prefix, boundType);
@@ -189,10 +194,7 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
     private String exceptionsThrownBy(ExecutableElement method) {
         StringJoiner declaration = new StringJoiner(", ", "throws ", " ").setEmptyValue("");
         method.getThrownTypes().stream()
-                .filter(DeclaredType.class::isInstance)
-                .map(DeclaredType.class::cast)
-                .map(typeMapper::name)
-                .forEach(declaration::add);
+                .forEach(t -> t.accept(this, declaration::add));
         return declaration.toString();
     }
 

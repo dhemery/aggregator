@@ -18,7 +18,7 @@ class TypeMapper {
     }
 
     public String name(TypeMirror type) {
-        if(DeclaredType.class.isInstance(type)) return name((DeclaredType) type);
+        if(type instanceof DeclaredType) return name(DeclaredType.class.cast(type));
         return String.valueOf(type);
     }
 

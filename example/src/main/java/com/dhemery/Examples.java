@@ -59,4 +59,7 @@ public class Examples {
 
     @Example
     public static <T extends List<? super Number>> T ridiculousTypeParameter(T whatever){ return null; }
+
+//    @Example
+//    public static void citesOtherListType(java.awt.List someList) {}
 }
