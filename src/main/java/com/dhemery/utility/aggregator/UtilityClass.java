@@ -6,7 +6,6 @@ import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -18,6 +17,7 @@ class UtilityClass {
     private static final List<Modifier> UTILITY_METHOD_MODIFIERS = Arrays.asList(Modifier.STATIC, Modifier.PUBLIC);
     private final TypeElement utilityAnnotation;
     private final Round round;
+    private final MethodWriter methodWriter = new MethodWriter();
 
     UtilityClass(TypeElement utilityAnnotation, Round round) {
         this.utilityAnnotation = utilityAnnotation;
@@ -27,18 +27,21 @@ class UtilityClass {
     void write(Filer filer) {
         TypeSpy spy = new TypeSpy();
         Set<String> types = new HashSet<>();
-        utilityMethods().forEach(m -> m.methodElement.asType().accept(spy, types::add));
+        methods()
+                .map(Element::asType)
+                .forEach(m -> m.accept(spy, types::add));
         TypeMapper typeMapper = new TypeMapper(types);
 
         PrintWriter out = printWriter(filer);
         out
                 .format("package %s;%n%n", packageName())
-                .format(typeMapper.imports())
+                .append(typeMapper.imports())
                 .format("%n%s", comment())
                 .format("%s%n", generator())
                 .format("public class %s {", simpleClassName());
-        utilityMethods().sorted()
-                .forEach(m -> m.write(out, new TypeWriter(typeMapper)));
+        methods()
+                .map(methodWriter::visit)
+                .forEach(out::append);
         out
                 .format("}")
                 .close();
@@ -56,12 +59,11 @@ class UtilityClass {
         return classSpecifier().className();
     }
 
-    private Stream<UtilityMethod> utilityMethods() {
+    private Stream<ExecutableElement> methods() {
         return round.elementsAnnotatedWith(utilityAnnotation)
                        .filter(annotatedElement -> annotatedElement.getKind() == ElementKind.METHOD)
                        .filter(methodElement -> methodElement.getModifiers().containsAll(UTILITY_METHOD_MODIFIERS))
-                       .map(ExecutableElement.class::cast)
-                       .map(UtilityMethod::new);
+                       .map(ExecutableElement.class::cast);
     }
 
     private String generator() {
