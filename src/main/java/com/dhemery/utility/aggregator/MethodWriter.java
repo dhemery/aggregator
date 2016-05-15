@@ -1,5 +1,8 @@
 package com.dhemery.utility.aggregator;
 
+import com.dhemery.utility.aggregator.visitors.ElementVisitorMixin;
+import com.dhemery.utility.aggregator.visitors.TypeVisitorMixin;
+
 import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.*;
 import javax.lang.model.type.*;
@@ -11,7 +14,7 @@ import static com.dhemery.utility.aggregator.UtilityAggregator.elements;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
-public class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisitor<Void, Consumer<String>> {
+public class MethodWriter implements ElementVisitorMixin<Void, Consumer<String>>, TypeVisitorMixin<Void, Consumer<String>> {
     private final TypeMapper typeMapper;
 
     public MethodWriter(TypeMapper typeMapper) {
@@ -19,40 +22,8 @@ public class MethodWriter implements TypeVisitor<Void, Consumer<String>>, Elemen
     }
 
     @Override
-    public Void visit(Element e) {
-        throw new UnsupportedOperationException(visitedWithoutConsumer(e));
-    }
-
-    @Override
-    public Void visit(Element e, Consumer<String> action) {
-        return e.accept(this, action);
-    }
-
-    @Override
-    public Void visit(TypeMirror t) {
-        throw new UnsupportedOperationException(visitedWithoutConsumer(t));
-    }
-
-    @Override
-    public Void visit(TypeMirror t, Consumer<String> action) {
-        return t.accept(this, action);
-    }
-
-    @Override
-    public Void visitArray(ArrayType t, Consumer<String> action) {
-        action.accept(format("/* visitArray %s (%s) */", t, t.getClass()));
-        return null;
-    }
-
-    @Override
     public Void visitDeclared(DeclaredType t, Consumer<String> action) {
         action.accept(format("/*DeclaredType*/%s%s", typeMapper.name(t), typeParametersOf(t)));
-        return null;
-    }
-
-    @Override
-    public Void visitError(ErrorType t, Consumer<String> action) {
-        action.accept(format("/* visitError %s (%s) */", t, t.getClass()));
         return null;
     }
 
@@ -69,45 +40,15 @@ public class MethodWriter implements TypeVisitor<Void, Consumer<String>>, Elemen
     }
 
     @Override
-    public Void visitExecutable(ExecutableType t, Consumer<String> action) {
-        action.accept(format("/* visitExecutable %s (%s) */", t, t.getClass()));
-        return null;
-    }
-
-    @Override
-    public Void visitIntersection(IntersectionType t, Consumer<String> action) {
-        action.accept(format("/* visitIntersection %s (%s) */", t, t.getClass()));
-        return null;
-    }
-
-    @Override
     public Void visitNoType(NoType t, Consumer<String> action) {
-        action.accept(String.valueOf(t));
         if(!t.getKind().equals(TypeKind.VOID)) throw new UnknownTypeException(t, action);
-        return null;
-    }
-
-    @Override
-    public Void visitNull(NullType t, Consumer<String> action) {
-        action.accept(format("/* visitNull %s (%s) */", t, t.getClass()));
-        return null;
-    }
-
-    @Override
-    public Void visitPackage(PackageElement e, Consumer<String> action) {
-        action.accept(format("/* visitPackage %s (%s) */", e, e.getClass()));
+        action.accept(String.valueOf(t));
         return null;
     }
 
     @Override
     public Void visitPrimitive(PrimitiveType t, Consumer<String> action) {
         action.accept(String.valueOf(t));
-        return null;
-    }
-
-    @Override
-    public Void visitType(TypeElement e, Consumer<String> action) {
-        action.accept(format("/* visitType %s (%s) */", e, e.getClass()));
         return null;
     }
 
@@ -120,24 +61,6 @@ public class MethodWriter implements TypeVisitor<Void, Consumer<String>>, Elemen
     @Override
     public Void visitTypeVariable(TypeVariable t, Consumer<String> action) {
         action.accept(format("/*TypeVariable*/%s%s", t, bound(t.getUpperBound(), "extends")));
-        return null;
-    }
-
-    @Override
-    public Void visitUnion(UnionType t, Consumer<String> action) {
-        action.accept(format("/* visitUnion %s (%s) */", t, t.getClass()));
-        return null;
-    }
-
-    @Override
-    public Void visitUnknown(Element e, Consumer<String> action) {
-        action.accept(format("/* visitUnknown (element) %s (%s) */", e, e.getClass()));
-        return null;
-    }
-
-    @Override
-    public Void visitUnknown(TypeMirror t, Consumer<String> action) {
-        action.accept(format("/* visitUnknown (type) %s (%s) */", t, t.getClass()));
         return null;
     }
 
@@ -238,9 +161,5 @@ public class MethodWriter implements TypeVisitor<Void, Consumer<String>>, Elemen
 
     private String typeParametersOf(DeclaredType element) {
         return asTypeParameters(element.getTypeArguments().stream());
-    }
-
-    private String visitedWithoutConsumer(AnnotatedConstruct subject) {
-        return format("Asked to visit %s (%s) with no consumer", subject, subject.getClass());
     }
 }
