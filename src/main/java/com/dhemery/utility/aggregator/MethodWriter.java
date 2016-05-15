@@ -1,5 +1,6 @@
 package com.dhemery.utility.aggregator;
 
+import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.*;
 import javax.lang.model.type.*;
 import java.util.*;
@@ -10,19 +11,16 @@ import static com.dhemery.utility.aggregator.UtilityAggregator.elements;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
-class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisitor<Void, Consumer<String>> {
-    private static final Consumer<String> COMPLAIN = (s) -> {
-        throw new RuntimeException(format("Unexpected consumption of %s", s));
-    };
+public class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisitor<Void, Consumer<String>> {
     private final TypeMapper typeMapper;
 
-    MethodWriter(TypeMapper typeMapper) {
+    public MethodWriter(TypeMapper typeMapper) {
         this.typeMapper = typeMapper;
     }
 
     @Override
     public Void visit(Element e) {
-        return visit(e, COMPLAIN);
+        throw new UnsupportedOperationException(visitedWithoutConsumer(e));
     }
 
     @Override
@@ -32,7 +30,7 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
     @Override
     public Void visit(TypeMirror t) {
-        return visit(t, COMPLAIN);
+        throw new UnsupportedOperationException(visitedWithoutConsumer(t));
     }
 
     @Override
@@ -84,7 +82,8 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
     @Override
     public Void visitNoType(NoType t, Consumer<String> action) {
-        action.accept(format("/* visitNoType %s (%s) */", t, t.getClass()));
+        action.accept(String.valueOf(t));
+        if(!t.getKind().equals(TypeKind.VOID)) throw new UnknownTypeException(t, action);
         return null;
     }
 
@@ -102,7 +101,7 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
     @Override
     public Void visitPrimitive(PrimitiveType t, Consumer<String> action) {
-        action.accept(format("/*PrimitiveType*/%s", t));
+        action.accept(String.valueOf(t));
         return null;
     }
 
@@ -224,10 +223,10 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
         return declaration.toString();
     }
 
-
     private String returnTypeOf(ExecutableElement method) {
         return typeMapper.name(method.getReturnType());
     }
+
 
     private String statementFor(ExecutableElement method) {
         return returnTypeOf(method).equals("void") ? "" : "return ";
@@ -239,5 +238,9 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
     private String typeParametersOf(DeclaredType element) {
         return asTypeParameters(element.getTypeArguments().stream());
+    }
+
+    private String visitedWithoutConsumer(AnnotatedConstruct subject) {
+        return format("Asked to visit %s (%s) with no consumer", subject, subject.getClass());
     }
 }
