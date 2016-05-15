@@ -2,9 +2,11 @@ package com.dhemery.utility.aggregator;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.*;
-import java.util.*;
+import java.util.List;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 
+import static com.dhemery.utility.aggregator.UtilityAggregator.elements;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
@@ -19,8 +21,8 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
     }
 
     @Override
-    public Void visit(Element e, Consumer<String> declaration) {
-        return e.accept(this, declaration);
+    public Void visit(Element e, Consumer<String> action) {
+        return e.accept(this, action);
     }
 
     @Override
@@ -29,139 +31,152 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
     }
 
     @Override
-    public Void visit(TypeMirror t, Consumer<String> declaration) {
-        return t.accept(this, declaration);
+    public Void visit(TypeMirror t, Consumer<String> action) {
+        return t.accept(this, action);
     }
 
     @Override
-    public Void visitArray(ArrayType t, Consumer<String> declaration) {
-        declaration.accept(format("/* visitArray %s (%s) */", t, t.getClass()));
+    public Void visitArray(ArrayType t, Consumer<String> action) {
+        action.accept(format("/* visitArray %s (%s) */", t, t.getClass()));
         return null;
     }
 
     @Override
-    public Void visitDeclared(DeclaredType t, Consumer<String> declaration) {
-        declaration.accept(String.valueOf(t.asElement()));
+    public Void visitDeclared(DeclaredType t, Consumer<String> action) {
+        action.accept(String.valueOf(t.asElement()));
         return null;
     }
 
     @Override
-    public Void visitError(ErrorType t, Consumer<String> declaration) {
-        declaration.accept(format("/* visitError %s (%s) */", t, t.getClass()));
+    public Void visitError(ErrorType t, Consumer<String> action) {
+        action.accept(format("/* visitError %s (%s) */", t, t.getClass()));
         return null;
     }
 
     @Override
-    public Void visitExecutable(ExecutableElement e, Consumer<String> declaration) {
-        declaration.accept(format("%n    "));
-
-        declaration.accept(format("%s %s", modifiersOf(e), typeParametersOf(e)));
-
-        declaration.accept(format("Void %s() {%n", e.getSimpleName()));
-        declaration.accept(format("        return null;%n"));
-        declaration.accept(format("    }%n"));
+    public Void visitExecutable(ExecutableElement method, Consumer<String> action) {
+        String declaration = new StringBuilder()
+                                     .append(format("%n%s", commentFor(method)))
+                                     .append(format("    %s %s%s %s(%s) %s{%n", modifiersOf(method), typeParametersOf(method), returnTypeOf(method), nameOf(method), parametersOf(method), exceptionsThrownBy(method)))
+                                     .append(format("        %s%s.%s(%s);%n", statementFor(method), classNameOf(method), nameOf(method), parameterNamesOf(method)))
+                                     .append(format("    }%n"))
+                                     .toString();
+        action.accept(declaration);
         return null;
     }
 
     @Override
-    public Void visitExecutable(ExecutableType t, Consumer<String> declaration) {
-        declaration.accept(format("/* visitExecutable %s (%s) */", t, t.getClass()));
+    public Void visitExecutable(ExecutableType t, Consumer<String> action) {
+        action.accept(format("/* visitExecutable %s (%s) */", t, t.getClass()));
         return null;
     }
 
     @Override
-    public Void visitIntersection(IntersectionType t, Consumer<String> declaration) {
-        declaration.accept(format("/* visitIntersection %s (%s) */", t, t.getClass()));
+    public Void visitIntersection(IntersectionType t, Consumer<String> action) {
+        action.accept(format("/* visitIntersection %s (%s) */", t, t.getClass()));
         return null;
     }
 
     @Override
-    public Void visitNoType(NoType t, Consumer<String> declaration) {
-        declaration.accept(format("/* visitNoType %s (%s) */", t, t.getClass()));
+    public Void visitNoType(NoType t, Consumer<String> action) {
+        action.accept(format("/* visitNoType %s (%s) */", t, t.getClass()));
         return null;
     }
 
     @Override
-    public Void visitNull(NullType t, Consumer<String> declaration) {
-        declaration.accept(format("/* visitNull %s (%s) */", t, t.getClass()));
+    public Void visitNull(NullType t, Consumer<String> action) {
+        action.accept(format("/* visitNull %s (%s) */", t, t.getClass()));
         return null;
     }
 
     @Override
-    public Void visitPackage(PackageElement e, Consumer<String> declaration) {
-        declaration.accept(format("/* visitPackage %s (%s) */", e, e.getClass()));
+    public Void visitPackage(PackageElement e, Consumer<String> action) {
+        action.accept(format("/* visitPackage %s (%s) */", e, e.getClass()));
         return null;
     }
 
     @Override
-    public Void visitPrimitive(PrimitiveType t, Consumer<String> declaration) {
-        declaration.accept(format("/* visitPrimitive %s (%s) */", t, t.getClass()));
+    public Void visitPrimitive(PrimitiveType t, Consumer<String> action) {
+        action.accept(format("/* visitPrimitive %s (%s) */", t, t.getClass()));
         return null;
     }
 
     @Override
-    public Void visitType(TypeElement e, Consumer<String> declaration) {
-        declaration.accept(format("/* visitType %s (%s) */", e, e.getClass()));
+    public Void visitType(TypeElement e, Consumer<String> action) {
+        action.accept(format("/* visitType %s (%s) */", e, e.getClass()));
         return null;
     }
 
     @Override
-    public Void visitTypeParameter(TypeParameterElement e, Consumer<String> declaration) {
-        declaration.accept(format("/* type parameter name */%s", e.getSimpleName()));
-        declaration.accept(boundsOf(e));
+    public Void visitTypeParameter(TypeParameterElement e, Consumer<String> action) {
+        action.accept(format("%s%s", e.getSimpleName(), boundsOf(e)));
         return null;
     }
 
     @Override
-    public Void visitTypeVariable(TypeVariable t, Consumer<String> declaration) {
-        declaration.accept(String.valueOf(t));
-        declaration.accept(bound(t.getUpperBound(), "extends"));
+    public Void visitTypeVariable(TypeVariable t, Consumer<String> action) {
+        action.accept(format("%s%s", t, bound(t.getUpperBound(), "extends")));
         return null;
     }
 
     @Override
-    public Void visitUnion(UnionType t, Consumer<String> declaration) {
-        declaration.accept(format("/* visitUnion %s (%s) */", t, t.getClass()));
+    public Void visitUnion(UnionType t, Consumer<String> action) {
+        action.accept(format("/* visitUnion %s (%s) */", t, t.getClass()));
         return null;
     }
 
     @Override
-    public Void visitUnknown(Element e, Consumer<String> declaration) {
-        declaration.accept(format("/* visitUnknown (element) %s (%s) */", e, e.getClass()));
+    public Void visitUnknown(Element e, Consumer<String> action) {
+        action.accept(format("/* visitUnknown (element) %s (%s) */", e, e.getClass()));
         return null;
     }
 
     @Override
-    public Void visitUnknown(TypeMirror t, Consumer<String> declaration) {
-        declaration.accept(format("/* visitUnknown (type) %s (%s) */", t, t.getClass()));
+    public Void visitUnknown(TypeMirror t, Consumer<String> action) {
+        action.accept(format("/* visitUnknown (type) %s (%s) */", t, t.getClass()));
         return null;
     }
 
     @Override
-    public Void visitVariable(VariableElement e, Consumer<String> declaration) {
-        declaration.accept(format("/* visitVariable %s (%s) */", e, e.getClass()));
+    public Void visitVariable(VariableElement e, Consumer<String> action) {
+        action.accept(format("%s %s", e.asType().toString(), e.getSimpleName()));
         return null;
     }
 
     @Override
-    public Void visitWildcard(WildcardType t, Consumer<String> declaration) {
-        declaration.accept(format("/* visitWildcard %s (%s) */", t, t.getClass()));
+    public Void visitWildcard(WildcardType t, Consumer<String> action) {
+        action.accept(format("/* visitWildcard %s (%s) */", t, t.getClass()));
         return null;
     }
 
     private String bound(TypeMirror bound, String prefix) {
-        return Optional.of(bound)
-                       .map(this::visit)
-                       .map(b -> format(" %s %s", prefix, b))
-                       .orElse("");
+        if (bound == null) return "";
+        if (Object.class.getName().equals(bound.toString())) return "";
+        return format(" %s %s", prefix, bound.toString());
     }
 
     private String boundsOf(TypeParameterElement e) {
-        StringJoiner joiner = new StringJoiner(",", " boundsOf ", "").setEmptyValue("");
+        StringJoiner declaration = new StringJoiner(",", " boundsOf ", "").setEmptyValue("");
         List<? extends TypeMirror> bounds = e.getBounds();
         bounds.stream()
-                .forEach(b -> b.accept(this, joiner::add));
-        return joiner.toString();
+                .forEach(b -> b.accept(this, declaration::add));
+        return declaration.toString();
+    }
+
+    private String commentFor(ExecutableElement method) {
+        return Comment.withPrefix(elements.getDocComment(method), "    ");
+    }
+
+    private String classNameOf(ExecutableElement method) {
+        return method.getEnclosingElement().toString();
+    }
+
+    private String exceptionsThrownBy(ExecutableElement method) {
+        StringJoiner declaration = new StringJoiner(", ", "throws ", " ").setEmptyValue("");
+        method.getThrownTypes().stream()
+                .map(String::valueOf)
+                .forEach(declaration::add);
+        return declaration.toString();
     }
 
     private String modifiersOf(ExecutableElement method) {
@@ -170,12 +185,40 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
                        .collect(joining(" "));
     }
 
+    private String nameOf(ExecutableElement method) {
+        return method.getSimpleName().toString();
+    }
+
+    private String parameterNamesOf(ExecutableElement method) {
+        StringJoiner parameterNames = new StringJoiner(", ");
+        List<? extends VariableElement> parameters = method.getParameters();
+        parameters.stream()
+                .map(String::valueOf)
+                .forEach(parameterNames::add);
+        return parameterNames.toString();
+    }
+
+    private String parametersOf(ExecutableElement method) {
+        StringJoiner declaration = new StringJoiner(", ");
+        method.getParameters()
+                .forEach(p -> p.accept(this, declaration::add));
+        return declaration.toString();
+    }
+
+
+    private String returnTypeOf(ExecutableElement method) {
+        return method.getReturnType().toString();
+    }
+
+    private String statementFor(ExecutableElement method) {
+        return returnTypeOf(method).equals("void") ? "" : "return ";
+    }
+
     private String typeParametersOf(Parameterizable element) {
-        StringJoiner joiner = new StringJoiner(",", "<", "> ").setEmptyValue("");
+        StringJoiner declaration = new StringJoiner(",", "<", "> ").setEmptyValue("");
         element.getTypeParameters().stream()
                 .map(Element::asType)
-                .map(String::valueOf)
-                .forEach(joiner::add);
-        return joiner.toString();
+                .forEach(t -> t.accept(this, declaration::add));
+        return declaration.toString();
     }
 }

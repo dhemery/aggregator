@@ -1,7 +1,6 @@
 package com.dhemery.utility.aggregator;
 
 import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeMirror;
 import java.util.*;
 import java.util.function.Function;
 
