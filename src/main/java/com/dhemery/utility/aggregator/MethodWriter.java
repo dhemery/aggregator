@@ -5,6 +5,7 @@ import javax.lang.model.type.*;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import static com.dhemery.utility.aggregator.UtilityAggregator.elements;
 import static java.lang.String.format;
@@ -14,6 +15,11 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
     private static final Consumer<String> COMPLAIN = (s) -> {
         throw new RuntimeException(format("Unexpected consumption of %s", s));
     };
+    private final TypeMapper typeMapper;
+
+    MethodWriter(TypeMapper typeMapper) {
+        this.typeMapper = typeMapper;
+    }
 
     @Override
     public Void visit(Element e) {
@@ -43,7 +49,7 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
     @Override
     public Void visitDeclared(DeclaredType t, Consumer<String> action) {
-        action.accept(String.valueOf(t.asElement()));
+        action.accept(format("/*DeclaredType*/%s%s", typeMapper.name(t), typeParametersOf(t)));
         return null;
     }
 
@@ -109,13 +115,13 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
     @Override
     public Void visitTypeParameter(TypeParameterElement e, Consumer<String> action) {
-        action.accept(format("%s%s", e.getSimpleName(), boundsOf(e)));
+        action.accept(format("/*TypeParameterElement*/%s%s", e.getSimpleName(), boundsOf(e)));
         return null;
     }
 
     @Override
     public Void visitTypeVariable(TypeVariable t, Consumer<String> action) {
-        action.accept(format("%s%s", t, bound(t.getUpperBound(), "extends")));
+        action.accept(format("/*TypeVariable*/%s%s", t, bound(t.getUpperBound(), "extends")));
         return null;
     }
 
@@ -139,26 +145,35 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
     @Override
     public Void visitVariable(VariableElement e, Consumer<String> action) {
-        action.accept(format("%s %s", e.asType().toString(), e.getSimpleName()));
+        action.accept(format("/*VariableElement*/%s %s", e.asType().toString(), e.getSimpleName()));
         return null;
     }
 
     @Override
     public Void visitWildcard(WildcardType t, Consumer<String> action) {
-        action.accept(format("/* visitWildcard %s (%s) */", t, t.getClass()));
+        String superBound = bound(t.getSuperBound(), "super");
+        String extendsBound = bound(t.getExtendsBound(), "extends");
+        action.accept(format("/*Wildcard*/?%s%s", superBound, extendsBound));
         return null;
+    }
+
+    private String asTypeParameters(Stream<? extends TypeMirror> stream) {
+        StringJoiner declaration = new StringJoiner(",", "<", "> ").setEmptyValue("");
+        stream.forEach(t -> t.accept(this, declaration::add));
+        return declaration.toString();
     }
 
     private String bound(TypeMirror bound, String prefix) {
         if (bound == null) return "";
         if (Object.class.getName().equals(bound.toString())) return "";
-        return format(" %s %s", prefix, bound.toString());
+        StringBuilder boundType = new StringBuilder();
+        bound.accept(this, boundType::append);
+        return format(" %s %s", prefix, boundType);
     }
 
     private String boundsOf(TypeParameterElement e) {
         StringJoiner declaration = new StringJoiner(",", " boundsOf ", "").setEmptyValue("");
-        List<? extends TypeMirror> bounds = e.getBounds();
-        bounds.stream()
+        e.getBounds().stream()
                 .forEach(b -> b.accept(this, declaration::add));
         return declaration.toString();
     }
@@ -174,7 +189,9 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
     private String exceptionsThrownBy(ExecutableElement method) {
         StringJoiner declaration = new StringJoiner(", ", "throws ", " ").setEmptyValue("");
         method.getThrownTypes().stream()
-                .map(String::valueOf)
+                .filter(DeclaredType.class::isInstance)
+                .map(DeclaredType.class::cast)
+                .map(typeMapper::name)
                 .forEach(declaration::add);
         return declaration.toString();
     }
@@ -207,7 +224,7 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
 
 
     private String returnTypeOf(ExecutableElement method) {
-        return method.getReturnType().toString();
+        return typeMapper.name(method.getReturnType());
     }
 
     private String statementFor(ExecutableElement method) {
@@ -215,10 +232,10 @@ class MethodWriter implements TypeVisitor<Void, Consumer<String>>, ElementVisito
     }
 
     private String typeParametersOf(Parameterizable element) {
-        StringJoiner declaration = new StringJoiner(",", "<", "> ").setEmptyValue("");
-        element.getTypeParameters().stream()
-                .map(Element::asType)
-                .forEach(t -> t.accept(this, declaration::add));
-        return declaration.toString();
+        return asTypeParameters(element.getTypeParameters().stream().map(Element::asType));
+    }
+
+    private String typeParametersOf(DeclaredType element) {
+        return asTypeParameters(element.getTypeArguments().stream());
     }
 }

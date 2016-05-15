@@ -17,7 +17,6 @@ class UtilityClass {
     private static final List<Modifier> UTILITY_METHOD_MODIFIERS = Arrays.asList(Modifier.STATIC, Modifier.PUBLIC);
     private final TypeElement utilityAnnotation;
     private final Round round;
-    private final MethodWriter methodWriter = new MethodWriter();
 
     UtilityClass(TypeElement utilityAnnotation, Round round) {
         this.utilityAnnotation = utilityAnnotation;
@@ -31,6 +30,7 @@ class UtilityClass {
                 .map(Element::asType)
                 .forEach(m -> m.accept(spy, types::add));
         TypeMapper typeMapper = new TypeMapper(types);
+        MethodWriter methodWriter = new MethodWriter(typeMapper);
 
         PrintWriter out = printWriter(filer);
         out
