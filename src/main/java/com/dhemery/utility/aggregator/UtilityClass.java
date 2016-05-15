@@ -40,8 +40,7 @@ class UtilityClass {
                 .format("%s%n", generator())
                 .format("public class %s {", simpleClassName());
         methods()
-                .map(methodWriter::visit)
-                .forEach(out::append);
+                .forEach(m -> m.accept(methodWriter, out::append));
         out
                 .format("}")
                 .close();
