@@ -10,11 +10,7 @@ repositories {
 }
 
 project.dependencies {
-    compile 'com.dhemery:utility-aggregator:1.0.0'
-}
-
-tasks.javadoc {
-    options.addStringOption('sourcepath', "$System.env.JAVA_HOME/src")
+    compile 'com.dhemery:aggregator:1.0.0'
 }
 
 def generatedSources = "$buildDir/generated-src"

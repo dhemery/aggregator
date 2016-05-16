@@ -17,7 +17,6 @@ project.dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-
 task sourcesJar(type: Jar) {
     description = 'Assembles a jar containing the main sources.'
     classifier 'sources'
