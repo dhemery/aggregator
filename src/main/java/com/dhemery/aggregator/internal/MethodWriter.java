@@ -14,15 +14,15 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
 class MethodWriter implements ElementVisitorMixin<Void, Consumer<String>>, TypeVisitorMixin<Void, Consumer<String>> {
-    private final TypeMapper typeMapper;
+    private final TypeNamer namer;
 
-    MethodWriter(TypeMapper typeMapper) {
-        this.typeMapper = typeMapper;
+    MethodWriter(TypeNamer namer) {
+        this.namer = namer;
     }
 
     @Override
     public Void visitDeclared(DeclaredType t, Consumer<String> action) {
-        action.accept(format("/*DeclaredType*/%s%s", typeMapper.name(t), typeParametersOf(t)));
+        action.accept(format("%s%s", namer.name(t), typeParametersOf(t)));
         return null;
     }
 
@@ -147,7 +147,7 @@ class MethodWriter implements ElementVisitorMixin<Void, Consumer<String>>, TypeV
     }
 
     private String returnTypeOf(ExecutableElement method) {
-        return typeMapper.name(method.getReturnType());
+        return namer.name(method.getReturnType());
     }
 
 

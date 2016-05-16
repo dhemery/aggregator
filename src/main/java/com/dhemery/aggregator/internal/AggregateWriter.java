@@ -32,13 +32,13 @@ public class AggregateWriter {
         methods()
                 .map(Element::asType)
                 .forEach(m -> m.accept(spy, types::add));
-        TypeMapper typeMapper = new TypeMapper(types);
-        MethodWriter methodWriter = new MethodWriter(typeMapper);
+        SimplifyingTypeNamer namer = new SimplifyingTypeNamer(types);
+        MethodWriter methodWriter = new MethodWriter(namer);
 
         PrintWriter out = printWriter(filer);
         out
                 .format("package %s;%n%n", aggregatePackageName())
-                .append(typeMapper.imports())
+                .append(namer.imports())
                 .format("%n%s", comment())
                 .format("%s%n", generator())
                 .format("public class %s {", aggregateSimpleName());
@@ -66,7 +66,7 @@ public class AggregateWriter {
     }
 
     private String aggregateSimpleName() {
-        return TypeMapper.simpleName(aggregateName());
+        return SimplifyingTypeNamer.simpleName(aggregateName());
     }
 
     private String comment() {

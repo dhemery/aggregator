@@ -8,12 +8,12 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 
-class TypeMapper {
+class SimplifyingTypeNamer implements TypeNamer {
     private final Map<String, List<String>> typesBySimpleName;
 
-    TypeMapper(Set<String> allTypes) {
+    SimplifyingTypeNamer(Set<String> allTypes) {
         typesBySimpleName = allTypes.stream()
-                                    .collect(groupingBy(TypeMapper::simpleName));
+                                    .collect(groupingBy(SimplifyingTypeNamer::simpleName));
     }
 
     public String name(TypeMirror type) {
