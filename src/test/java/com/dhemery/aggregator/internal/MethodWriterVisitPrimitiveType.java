@@ -1,6 +1,5 @@
 package com.dhemery.aggregator.internal;
 
-
 import com.dhemery.aggregator.helpers.FakePrimitiveType;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;

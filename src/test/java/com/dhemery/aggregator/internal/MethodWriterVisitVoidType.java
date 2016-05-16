@@ -1,7 +1,6 @@
 package com.dhemery.aggregator.internal;
 
 
-import com.dhemery.aggregator.helpers.Consumers;
 import com.dhemery.aggregator.helpers.FakeNoType;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
@@ -9,10 +8,11 @@ import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.lang.model.type.*;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import java.util.function.Consumer;
 
-public class MethodWriterVisitNoType {
+public class MethodWriterVisitVoidType {
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
     @Mock
@@ -29,19 +29,5 @@ public class MethodWriterVisitNoType {
         }});
 
         writer.visit(voidType, declaration);
-    }
-
-    @Test(expected = UnknownTypeException.class)
-    public void packageTypeThrowsInsteadOfDeclaring() {
-        TypeMirror packageType = new FakeNoType(TypeKind.PACKAGE);
-
-        writer.visit(packageType, Consumers::doNotCall);
-    }
-
-    @Test(expected = UnknownTypeException.class)
-    public void noneTypeThrowsInsteadOfDeclaring() {
-        TypeMirror packageType = new FakeNoType(TypeKind.NONE);
-
-        writer.visit(packageType, Consumers::doNotCall);
     }
 }

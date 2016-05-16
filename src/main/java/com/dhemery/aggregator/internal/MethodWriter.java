@@ -40,14 +40,15 @@ class MethodWriter implements ElementVisitorMixin<Void, Consumer<String>>, TypeV
 
     @Override
     public Void visitNoType(NoType t, Consumer<String> action) {
-        if(!t.getKind().equals(TypeKind.VOID)) throw new UnknownTypeException(t, action);
-        action.accept(String.valueOf(t));
+        TypeKind kind = t.getKind();
+        if(!Objects.equals(kind, TypeKind.VOID)) throw new UnknownTypeException(t, action);
+        action.accept(String.valueOf(kind).toLowerCase());
         return null;
     }
 
     @Override
     public Void visitPrimitive(PrimitiveType t, Consumer<String> action) {
-        action.accept(String.valueOf(t));
+        action.accept(String.valueOf(t.getKind()).toLowerCase());
         return null;
     }
 
