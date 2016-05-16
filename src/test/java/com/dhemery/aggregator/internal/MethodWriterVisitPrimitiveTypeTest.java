@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 @RunWith(Parameterized.class)
-public class MethodWriterVisitPrimitiveType {
+public class MethodWriterVisitPrimitiveTypeTest {
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
     @Mock

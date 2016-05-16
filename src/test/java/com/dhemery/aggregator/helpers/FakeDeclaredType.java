@@ -7,10 +7,11 @@ import java.util.List;
 
 
 public class FakeDeclaredType implements FakeAnnotatedConstruct, DeclaredType {
-    private final String name;
+    private final Element element;
 
-    public FakeDeclaredType(String name) {
-        this.name = name;
+    public FakeDeclaredType(FakeElement element) {
+        this.element = element;
+        element.setType(this);
     }
 
     @Override
@@ -20,7 +21,7 @@ public class FakeDeclaredType implements FakeAnnotatedConstruct, DeclaredType {
 
     @Override
     public Element asElement() {
-        throw new UnsupportedOperationException();
+        return element;
     }
 
     @Override

@@ -12,7 +12,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import java.util.function.Consumer;
 
-public class MethodWriterVisitVoidType {
+public class MethodWriterVisitVoidTypeTest {
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
     @Mock

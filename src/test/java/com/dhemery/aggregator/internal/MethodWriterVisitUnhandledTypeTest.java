@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import javax.lang.model.type.*;
 
-public class MethodWriterVisitUnhandledType {
+public class MethodWriterVisitUnhandledTypeTest {
     private final MethodWriter writer = new MethodWriter(null);
 
     @Test(expected = UnknownTypeException.class)

@@ -2,15 +2,18 @@ package com.dhemery.aggregator.internal;
 
 
 import com.dhemery.aggregator.helpers.FakeDeclaredType;
+import com.dhemery.aggregator.helpers.FakeTypeElement;
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.*;
 
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import java.util.function.Consumer;
 
-public class MethodWriterVisitDeclaredType {
+public class MethodWriterVisitDeclaredTypeTest {
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
     @Mock
@@ -27,8 +30,9 @@ public class MethodWriterVisitDeclaredType {
 
     @Test
     public void simpleDeclaredType() {
-        final String typeName = "foo.bar.Baz";
-        DeclaredType simpleDeclaredType = new FakeDeclaredType(typeName);
+        String typeName = "foo.bar.Baz";
+        FakeTypeElement typeElement = new FakeTypeElement(typeName);
+        DeclaredType simpleDeclaredType = new FakeDeclaredType(typeElement);
 
         context.checking(new Expectations() {{
             allowing(namer).name(with(simpleDeclaredType));
