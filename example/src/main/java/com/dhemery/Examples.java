@@ -1,9 +1,11 @@
 package com.dhemery;
 
+import javax.annotation.processing.SupportedAnnotationTypes;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
 
+@SupportedAnnotationTypes("unused")
 public class Examples {
     @Example
     public static Object returnsObject() {

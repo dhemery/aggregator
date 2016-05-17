@@ -9,7 +9,6 @@ import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
@@ -17,20 +16,19 @@ import static java.lang.String.format;
  * Writes a class that aggregates methods annotated a given aggregate annotation.
  */
 public class AggregateWriter {
-    private static final List<Modifier> UTILITY_METHOD_MODIFIERS = Arrays.asList(Modifier.STATIC, Modifier.PUBLIC);
     private final TypeElement aggregateAnnotation;
-    private final Round round;
     private final TypeSpy spy;
+    private final Collection<ExecutableElement> methods;
 
-    AggregateWriter(TypeElement aggregateAnnotation, Round round, TypeSpy spy) {
+    AggregateWriter(TypeElement aggregateAnnotation, TypeSpy spy, Collection<ExecutableElement> methods) {
         this.aggregateAnnotation = aggregateAnnotation;
-        this.round = round;
         this.spy = spy;
+        this.methods = methods;
     }
 
     public void write(Filer filer) {
         Set<String> types = new HashSet<>();
-        methods()
+        methods.stream()
                 .map(Element::asType)
                 .forEach(m -> m.accept(spy, types::add));
         SimplifyingTypeNamer namer = new SimplifyingTypeNamer(types);
@@ -43,7 +41,7 @@ public class AggregateWriter {
                 .format("%n%s", comment())
                 .format("%s%n", generator())
                 .format("public class %s {", aggregateSimpleName());
-        methods()
+        methods
                 .forEach(m -> m.accept(methodWriter, out::append));
         out
                 .format("}")
@@ -88,13 +86,6 @@ public class AggregateWriter {
 
     private String generatorName() {
         return Aggregate.class.getName();
-    }
-
-    private Stream<ExecutableElement> methods() {
-        return round.elementsAnnotatedWith(aggregateAnnotation)
-                       .filter(annotatedElement -> annotatedElement.getKind() == ElementKind.METHOD)
-                       .filter(methodElement -> methodElement.getModifiers().containsAll(UTILITY_METHOD_MODIFIERS))
-                       .map(ExecutableElement.class::cast);
     }
 
     private String packageName(String qualifiedName) {
