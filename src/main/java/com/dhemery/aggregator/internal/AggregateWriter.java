@@ -9,10 +9,10 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Writes a class that aggregates methods annotated a given aggregate annotation.
@@ -33,8 +33,8 @@ public class AggregateWriter {
 
         PrintWriter out = printWriter(filer);
         out
-                .format("package %s;%n%n", aggregatePackageName())
-                .append(namer.imports())
+                .format("package %s;%n", aggregatePackageName())
+                .format("%n%s%n", imports())
                 .format("%n%s", comment())
                 .format("%s%n", generator())
                 .format("public class %s {", aggregateSimpleName());
@@ -43,6 +43,14 @@ public class AggregateWriter {
         out
                 .format("}")
                 .close();
+    }
+
+    private String imports() {
+        return namer.all().stream()
+                       .filter(i -> !Objects.equals(i, Object.class.getName()))
+                       .sorted()
+                       .map(i -> format("import %s;", i))
+                       .collect(joining(System.lineSeparator()));
     }
 
     private Aggregate aggregate() {

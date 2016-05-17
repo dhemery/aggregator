@@ -4,9 +4,8 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.util.*;
 
-import static java.lang.String.format;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
 
 class SimplifyingTypeNamer implements TypeNamer {
     private final Map<String, List<String>> typesBySimpleName;
@@ -30,13 +29,10 @@ class SimplifyingTypeNamer implements TypeNamer {
     }
 
     @Override
-    public String imports() {
+    public Set<String> all() {
         return typesBySimpleName.values().stream()
                        .flatMap(Collection::stream)
-                       .filter(t -> !Objects.equals(t, Object.class.getName()))
-                       .sorted()
-                       .map(i -> format("import %s;%n", i))
-                       .collect(joining());
+                       .collect(toSet());
     }
 
     static String simpleName(String qualifiedName) {
