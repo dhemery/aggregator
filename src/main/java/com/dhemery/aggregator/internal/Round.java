@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 public class Round {
     private static final List<Modifier> UTILITY_METHOD_MODIFIERS = Arrays.asList(Modifier.STATIC, Modifier.PUBLIC);
     private final RoundEnvironment roundEnvironment;
-    private final TypeSpy typeSpy = new TypeSpy();
+    private final TypeReferenceReporter typeReferenceReporter = new TypeReferenceReporter();
 
     public Round(RoundEnvironment roundEnvironment) {
         this.roundEnvironment = roundEnvironment;
@@ -25,7 +25,7 @@ public class Round {
     public Stream<AggregateWriter> aggregates() {
         return roundEnvironment.getElementsAnnotatedWith(Aggregate.class).stream()
                        .map(TypeElement.class::cast)
-                       .map(a -> new AggregateWriter(a, methods(a), namer(methods(a))));
+                       .map(a -> new AggregateWriter(a, methods(a), typesReferencedIn(methods(a))));
     }
 
     private Collection<ExecutableElement> methods(TypeElement a) {
@@ -40,11 +40,11 @@ public class Round {
         return roundEnvironment.getElementsAnnotatedWith(aggregateAnnotation).stream();
     }
 
-    private SimplifyingTypeReferences namer(Collection<ExecutableElement> methods) {
-        Set<String> types = new HashSet<>();
+    private SimplifyingTypeReferences typesReferencedIn(Collection<ExecutableElement> methods) {
+        Set<String> referencedTypeNames = new HashSet<>();
         methods.stream()
                 .map(Element::asType)
-                .forEach(m -> m.accept(typeSpy, types::add));
-        return new SimplifyingTypeReferences(types);
+                .forEach(m -> m.accept(typeReferenceReporter, referencedTypeNames::add));
+        return new SimplifyingTypeReferences(referencedTypeNames);
     }
 }

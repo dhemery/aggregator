@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class SimplifyingTypeNamerTest {
+public class SimplifyingTypeReferencesTest {
     @Test
     @Ignore("wip")
     public void simpleNameOccursOnceInTypes() {
