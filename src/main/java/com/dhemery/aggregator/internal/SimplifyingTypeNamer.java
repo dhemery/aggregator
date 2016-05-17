@@ -16,27 +16,30 @@ class SimplifyingTypeNamer implements TypeNamer {
                                     .collect(groupingBy(SimplifyingTypeNamer::simpleName));
     }
 
+    @Override
     public String name(TypeMirror type) {
         if(type instanceof DeclaredType) return name(DeclaredType.class.cast(type));
         return String.valueOf(type);
     }
 
+    @Override
     public String name(DeclaredType type) {
         String qualifiedName = String.valueOf(type);
         String simpleName = type.asElement().getSimpleName().toString();
         return typesBySimpleName.get(simpleName).size() == 1 ? simpleName : qualifiedName;
     }
 
-    static String simpleName(String qualifiedName) {
-        return qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
-    }
-
-    String imports() {
+    @Override
+    public String imports() {
         return typesBySimpleName.values().stream()
                        .flatMap(Collection::stream)
                        .filter(t -> !Objects.equals(t, Object.class.getName()))
                        .sorted()
                        .map(i -> format("import %s;%n", i))
                        .collect(joining());
+    }
+
+    static String simpleName(String qualifiedName) {
+        return qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
     }
 }

@@ -20,9 +20,9 @@ import static java.lang.String.format;
 public class AggregateWriter {
     private final TypeElement aggregateAnnotation;
     private final Collection<ExecutableElement> methods;
-    private final SimplifyingTypeNamer namer;
+    private final TypeNamer namer;
 
-    AggregateWriter(TypeElement aggregateAnnotation, Collection<ExecutableElement> methods, SimplifyingTypeNamer namer) {
+    AggregateWriter(TypeElement aggregateAnnotation, Collection<ExecutableElement> methods, TypeNamer namer) {
         this.aggregateAnnotation = aggregateAnnotation;
         this.methods = methods;
         this.namer = namer;
