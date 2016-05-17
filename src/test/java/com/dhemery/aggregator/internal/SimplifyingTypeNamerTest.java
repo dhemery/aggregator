@@ -23,7 +23,7 @@ public class SimplifyingTypeNamerTest {
         FakeTypeElement typeElement = new FakeTypeElement(typeName);
         DeclaredType type = new FakeDeclaredType(typeElement);
 
-        String simplifiedName = namer.name(type);
+        String simplifiedName = namer.nameOf(type);
 
         assertThat(simplifiedName, is(type.asElement().getSimpleName()));
     }

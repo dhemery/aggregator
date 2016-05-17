@@ -5,8 +5,8 @@ import javax.lang.model.type.TypeMirror;
 import java.util.Set;
 
 interface TypeNamer {
-    String name(TypeMirror type);
-    String name(DeclaredType type);
+    String nameOf(TypeMirror type);
+    String nameOf(DeclaredType type);
 
-    Set<String> all();
+    Set<String> fullNames();
 }

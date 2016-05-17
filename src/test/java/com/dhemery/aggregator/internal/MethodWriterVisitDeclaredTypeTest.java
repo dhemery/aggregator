@@ -8,8 +8,6 @@ import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.*;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import java.util.function.Consumer;
 
@@ -35,7 +33,7 @@ public class MethodWriterVisitDeclaredTypeTest {
         DeclaredType simpleDeclaredType = new FakeDeclaredType(typeElement);
 
         context.checking(new Expectations() {{
-            allowing(namer).name(with(simpleDeclaredType));
+            allowing(namer).nameOf(with(simpleDeclaredType));
                 will(returnValue(typeName));
 
             oneOf(declaration).accept(typeName);

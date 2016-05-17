@@ -22,7 +22,7 @@ class MethodWriter implements ElementVisitorMixin<Void, Consumer<String>>, TypeV
 
     @Override
     public Void visitDeclared(DeclaredType t, Consumer<String> action) {
-        action.accept(format("%s%s", namer.name(t), typeParametersOf(t)));
+        action.accept(format("%s%s", namer.nameOf(t), typeParametersOf(t)));
         return null;
     }
 
@@ -147,7 +147,7 @@ class MethodWriter implements ElementVisitorMixin<Void, Consumer<String>>, TypeV
     }
 
     private String returnTypeOf(ExecutableElement method) {
-        return namer.name(method.getReturnType());
+        return namer.nameOf(method.getReturnType());
     }
 
 

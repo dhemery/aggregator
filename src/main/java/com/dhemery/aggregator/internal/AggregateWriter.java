@@ -46,7 +46,7 @@ public class AggregateWriter {
     }
 
     private String imports() {
-        return namer.all().stream()
+        return namer.fullNames().stream()
                        .filter(i -> !Objects.equals(i, Object.class.getName()))
                        .sorted()
                        .map(i -> format("import %s;", i))

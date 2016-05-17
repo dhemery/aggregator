@@ -8,29 +8,29 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toSet;
 
 class SimplifyingTypeNamer implements TypeNamer {
-    private final Map<String, List<String>> typesBySimpleName;
+    private final Map<String, List<String>> fullyQualifiedNamesBySimpleName;
 
-    SimplifyingTypeNamer(Set<String> allTypes) {
-        typesBySimpleName = allTypes.stream()
+    SimplifyingTypeNamer(Set<String> fullyQualifiedNames) {
+        fullyQualifiedNamesBySimpleName = fullyQualifiedNames.stream()
                                     .collect(groupingBy(SimplifyingTypeNamer::simpleName));
     }
 
     @Override
-    public String name(TypeMirror type) {
-        if(type instanceof DeclaredType) return name(DeclaredType.class.cast(type));
+    public String nameOf(TypeMirror type) {
+        if(type instanceof DeclaredType) return nameOf(DeclaredType.class.cast(type));
         return String.valueOf(type);
     }
 
     @Override
-    public String name(DeclaredType type) {
+    public String nameOf(DeclaredType type) {
         String qualifiedName = String.valueOf(type);
         String simpleName = type.asElement().getSimpleName().toString();
-        return typesBySimpleName.get(simpleName).size() == 1 ? simpleName : qualifiedName;
+        return fullyQualifiedNamesBySimpleName.get(simpleName).size() == 1 ? simpleName : qualifiedName;
     }
 
     @Override
-    public Set<String> all() {
-        return typesBySimpleName.values().stream()
+    public Set<String> fullNames() {
+        return fullyQualifiedNamesBySimpleName.values().stream()
                        .flatMap(Collection::stream)
                        .collect(toSet());
     }
