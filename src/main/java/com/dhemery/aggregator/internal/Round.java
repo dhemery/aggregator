@@ -13,6 +13,7 @@ import java.util.stream.Stream;
  */
 public class Round {
     private final RoundEnvironment roundEnvironment;
+    private final TypeSpy typeSpy = new TypeSpy();
 
     public Round(RoundEnvironment roundEnvironment) {
         this.roundEnvironment = roundEnvironment;
@@ -21,7 +22,7 @@ public class Round {
     public Stream<AggregateWriter> aggregates() {
         return roundEnvironment.getElementsAnnotatedWith(Aggregate.class).stream()
                        .map(TypeElement.class::cast)
-                       .map(a -> new AggregateWriter(a, this));
+                       .map(a -> new AggregateWriter(a, this, typeSpy));
     }
 
     Stream<? extends Element> elementsAnnotatedWith(TypeElement aggregateAnnotation) {

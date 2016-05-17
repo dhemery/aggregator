@@ -20,14 +20,15 @@ public class AggregateWriter {
     private static final List<Modifier> UTILITY_METHOD_MODIFIERS = Arrays.asList(Modifier.STATIC, Modifier.PUBLIC);
     private final TypeElement aggregateAnnotation;
     private final Round round;
+    private final TypeSpy spy;
 
-    AggregateWriter(TypeElement aggregateAnnotation, Round round) {
+    AggregateWriter(TypeElement aggregateAnnotation, Round round, TypeSpy spy) {
         this.aggregateAnnotation = aggregateAnnotation;
         this.round = round;
+        this.spy = spy;
     }
 
     public void write(Filer filer) {
-        TypeSpy spy = new TypeSpy();
         Set<String> types = new HashSet<>();
         methods()
                 .map(Element::asType)
