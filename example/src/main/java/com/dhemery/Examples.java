@@ -1,11 +1,11 @@
 package com.dhemery;
 
-import javax.annotation.processing.SupportedAnnotationTypes;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 
-@SupportedAnnotationTypes("unused")
+@SuppressWarnings("SameReturnValue")
 public class Examples {
     @Example
     public static Object returnsObject() {
@@ -34,22 +34,33 @@ public class Examples {
 
     @Example
     public static void returnsVoid() {
+        System.out.println("");
     }
 
     @Example
-    public static int returnsInt() { return 42; }
+    public static int returnsInt() {
+        return new Random().nextInt();
+    }
 
     @Example
-    public static void takesPrimitiveTypes(byte b, char c, int i, long l, float f, double d){}
+    public static void takesPrimitiveTypes(byte b, char c, int i, long l, float f, double d) {
+        System.out.format("%s%s%s%s%s%s", b, c, i, l, f, d);
+    }
 
     @Example
-    private static void NOT_INCLUDED_BECAUSE_PRIVATE(){}
+    private static void NOT_INCLUDED_BECAUSE_PRIVATE() {
+        returnsVoid();
+    }
 
     @Example
-    public void NOT_INCLUDED_BECAUSE_NOT_STATIC(){}
+    public void NOT_INCLUDED_BECAUSE_NOT_STATIC() {
+        returnsVoid();
+    }
 
     @Example
-    public static synchronized final strictfp void extraModifiers(){}
+    public static synchronized strictfp void extraModifiers() {
+        returnsVoid();
+    }
 
     /**
      * Here is a javadoc comment.
@@ -57,7 +68,9 @@ public class Examples {
      * This entire comment will be copied to the aggregate class.
      */
     @Example
-    public static void withComment(){}
+    public static void withComment() {
+        returnsVoid();
+    }
 
     @Example
     public static <T extends List<? super Number>> T ridiculousTypeParameter(T whatever){ return null; }

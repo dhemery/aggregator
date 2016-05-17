@@ -1,13 +1,12 @@
 package com.dhemery.aggregator;
 
-import com.dhemery.aggregator.internal.Round;
 import com.dhemery.aggregator.internal.AggregateWriter;
+import com.dhemery.aggregator.internal.Round;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -38,7 +37,6 @@ import static java.util.stream.Collectors.toSet;
  */
 public class Aggregator extends AbstractProcessor {
     public static Elements elements;
-    public static Types types;
     private final Class<?>[] supportedAnnotationTypes = { Aggregate.class };
 
     public Aggregator(){}
@@ -47,7 +45,6 @@ public class Aggregator extends AbstractProcessor {
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
         elements = processingEnv.getElementUtils();
-        types = processingEnv.getTypeUtils();
     }
 
     @Override

@@ -37,7 +37,7 @@ public class Round {
     }
 
 
-    Stream<? extends Element> elementsAnnotatedWith(TypeElement aggregateAnnotation) {
+    private Stream<? extends Element> elementsAnnotatedWith(TypeElement aggregateAnnotation) {
         return roundEnvironment.getElementsAnnotatedWith(aggregateAnnotation).stream();
     }
 }
