@@ -20,9 +20,9 @@ import static java.util.stream.Collectors.joining;
 public class AggregateWriter {
     private final TypeElement aggregateAnnotation;
     private final Collection<ExecutableElement> methods;
-    private final TypeNamer namer;
+    private final TypeReferences namer;
 
-    AggregateWriter(TypeElement aggregateAnnotation, Collection<ExecutableElement> methods, TypeNamer namer) {
+    AggregateWriter(TypeElement aggregateAnnotation, Collection<ExecutableElement> methods, TypeReferences namer) {
         this.aggregateAnnotation = aggregateAnnotation;
         this.methods = methods;
         this.namer = namer;
@@ -70,7 +70,7 @@ public class AggregateWriter {
     }
 
     private String aggregateSimpleName() {
-        return SimplifyingTypeNamer.simpleName(aggregateName());
+        return SimplifyingTypeReferences.simpleName(aggregateName());
     }
 
     private String comment() {

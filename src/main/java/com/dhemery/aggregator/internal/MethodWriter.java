@@ -14,9 +14,9 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
 class MethodWriter implements ElementVisitorMixin<Void, Consumer<String>>, TypeVisitorMixin<Void, Consumer<String>> {
-    private final TypeNamer namer;
+    private final TypeReferences namer;
 
-    MethodWriter(TypeNamer namer) {
+    MethodWriter(TypeReferences namer) {
         this.namer = namer;
     }
 

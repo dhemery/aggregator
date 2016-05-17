@@ -7,12 +7,12 @@ import java.util.*;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toSet;
 
-class SimplifyingTypeNamer implements TypeNamer {
+class SimplifyingTypeReferences implements TypeReferences {
     private final Map<String, List<String>> fullyQualifiedNamesBySimpleName;
 
-    SimplifyingTypeNamer(Set<String> fullyQualifiedNames) {
+    SimplifyingTypeReferences(Set<String> fullyQualifiedNames) {
         fullyQualifiedNamesBySimpleName = fullyQualifiedNames.stream()
-                                    .collect(groupingBy(SimplifyingTypeNamer::simpleName));
+                                    .collect(groupingBy(SimplifyingTypeReferences::simpleName));
     }
 
     @Override

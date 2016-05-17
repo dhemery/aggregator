@@ -40,11 +40,11 @@ public class Round {
         return roundEnvironment.getElementsAnnotatedWith(aggregateAnnotation).stream();
     }
 
-    private SimplifyingTypeNamer namer(Collection<ExecutableElement> methods) {
+    private SimplifyingTypeReferences namer(Collection<ExecutableElement> methods) {
         Set<String> types = new HashSet<>();
         methods.stream()
                 .map(Element::asType)
                 .forEach(m -> m.accept(typeSpy, types::add));
-        return new SimplifyingTypeNamer(types);
+        return new SimplifyingTypeReferences(types);
     }
 }

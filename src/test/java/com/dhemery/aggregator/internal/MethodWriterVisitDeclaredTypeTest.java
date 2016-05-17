@@ -17,7 +17,7 @@ public class MethodWriterVisitDeclaredTypeTest {
     @Mock
     private Consumer<String> declaration;
     @Mock
-    private TypeNamer namer;
+    private TypeReferences namer;
 
     private MethodWriter subject;
 

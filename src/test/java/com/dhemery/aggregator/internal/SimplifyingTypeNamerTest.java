@@ -18,7 +18,7 @@ public class SimplifyingTypeNamerTest {
     @Ignore("wip")
     public void simpleNameOccursOnceInTypes() {
         String typeName = "foo.bar.Baz";
-        TypeNamer namer = new SimplifyingTypeNamer(setOf(typeName));
+        TypeReferences namer = new SimplifyingTypeReferences(setOf(typeName));
 
         FakeTypeElement typeElement = new FakeTypeElement(typeName);
         DeclaredType type = new FakeDeclaredType(typeElement);
