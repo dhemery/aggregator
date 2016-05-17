@@ -4,11 +4,13 @@ import com.dhemery.aggregator.Aggregate;
 import com.dhemery.aggregator.AggregatorException;
 
 import javax.annotation.processing.Filer;
-import javax.lang.model.element.*;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
 
 import static java.lang.String.format;
 
@@ -17,21 +19,16 @@ import static java.lang.String.format;
  */
 public class AggregateWriter {
     private final TypeElement aggregateAnnotation;
-    private final TypeSpy spy;
     private final Collection<ExecutableElement> methods;
+    private final SimplifyingTypeNamer namer;
 
-    AggregateWriter(TypeElement aggregateAnnotation, TypeSpy spy, Collection<ExecutableElement> methods) {
+    AggregateWriter(TypeElement aggregateAnnotation, Collection<ExecutableElement> methods, SimplifyingTypeNamer namer) {
         this.aggregateAnnotation = aggregateAnnotation;
-        this.spy = spy;
         this.methods = methods;
+        this.namer = namer;
     }
 
     public void write(Filer filer) {
-        Set<String> types = new HashSet<>();
-        methods.stream()
-                .map(Element::asType)
-                .forEach(m -> m.accept(spy, types::add));
-        SimplifyingTypeNamer namer = new SimplifyingTypeNamer(types);
         MethodWriter methodWriter = new MethodWriter(namer);
 
         PrintWriter out = printWriter(filer);

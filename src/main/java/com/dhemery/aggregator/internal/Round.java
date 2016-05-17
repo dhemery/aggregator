@@ -25,7 +25,7 @@ public class Round {
     public Stream<AggregateWriter> aggregates() {
         return roundEnvironment.getElementsAnnotatedWith(Aggregate.class).stream()
                        .map(TypeElement.class::cast)
-                       .map(a -> new AggregateWriter(a, typeSpy, methods(a)));
+                       .map(a -> new AggregateWriter(a, methods(a), namer(methods(a))));
     }
 
     private Collection<ExecutableElement> methods(TypeElement a) {
@@ -36,8 +36,15 @@ public class Round {
                        .collect(toList());
     }
 
-
     private Stream<? extends Element> elementsAnnotatedWith(TypeElement aggregateAnnotation) {
         return roundEnvironment.getElementsAnnotatedWith(aggregateAnnotation).stream();
+    }
+
+    private SimplifyingTypeNamer namer(Collection<ExecutableElement> methods) {
+        Set<String> types = new HashSet<>();
+        methods.stream()
+                .map(Element::asType)
+                .forEach(m -> m.accept(typeSpy, types::add));
+        return new SimplifyingTypeNamer(types);
     }
 }
