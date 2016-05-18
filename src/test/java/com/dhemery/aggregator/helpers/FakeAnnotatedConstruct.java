@@ -2,8 +2,6 @@ package com.dhemery.aggregator.helpers;
 
 import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVisitor;
 import java.lang.annotation.Annotation;
 import java.util.List;
 

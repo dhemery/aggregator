@@ -6,7 +6,7 @@ import javax.lang.model.type.*;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-class TypeReferenceReporter implements TypeVisitorMixin<Void, Consumer<String>> {
+class TypeScanner implements TypeVisitorMixin<Void, Consumer<String>> {
     @Override
     public Void defaultAction(TypeMirror e, Consumer<String> ignored) {
         return null;

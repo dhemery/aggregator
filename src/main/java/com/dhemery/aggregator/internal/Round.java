@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 public class Round {
     private static final List<Modifier> UTILITY_METHOD_MODIFIERS = Arrays.asList(Modifier.STATIC, Modifier.PUBLIC);
     private final RoundEnvironment roundEnvironment;
-    private final TypeReferenceReporter typeReferenceReporter = new TypeReferenceReporter();
+    private final TypeScanner typeScanner = new TypeScanner();
 
     public Round(RoundEnvironment roundEnvironment) {
         this.roundEnvironment = roundEnvironment;
@@ -44,7 +44,7 @@ public class Round {
         Set<String> referencedTypeNames = new HashSet<>();
         methods.stream()
                 .map(Element::asType)
-                .forEach(m -> m.accept(typeReferenceReporter, referencedTypeNames::add));
+                .forEach(m -> m.accept(typeScanner, referencedTypeNames::add));
         return new SimplifyingTypeReferences(referencedTypeNames);
     }
 }
