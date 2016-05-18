@@ -38,8 +38,4 @@ public class Project {
     private static String classPathFor(Class<?> clazz) {
         return clazz.getProtectionDomain().getCodeSource().getLocation().getFile();
     }
-
-    public static ProjectBuilder project() {
-        return new ProjectBuilder();
-    }
 }

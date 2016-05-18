@@ -8,10 +8,12 @@ import javax.annotation.processing.Processor;
 import javax.lang.model.element.Element;
 import javax.lang.model.util.ElementFilter;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
-import static com.dhemery.aggregator.helpers.Processors.processor;
-import static com.dhemery.aggregator.helpers.Project.project;
+import static com.dhemery.aggregator.helpers.ProcessorBuilder.processor;
+import static com.dhemery.aggregator.helpers.ProjectBuilder.project;
+import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFileForClass;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
@@ -20,14 +22,9 @@ public class TypeReferenceReporterTests {
 
     @Test
     public void foo() throws IOException {
-        String method = "public static java.nio.file.Path makeAPath() { return null; }";
-        List<String> code = Arrays.asList(
-                "public class Simple {",
-                method,
-                "}"
-        );
-
-        SourceFile sourceFile = new SourceFile("Simple.java", code);
+        SourceFile sourceFile = sourceFileForClass("Simple")
+                                        .withLine("public static java.nio.file.Path makeAPath() { return null; }")
+                                        .build();
 
         Set<String> reportedTypes = reportTypesUsedIn(sourceFile);
 
@@ -41,7 +38,7 @@ public class TypeReferenceReporterTests {
 
         Processor processor = processor()
                                       .supportingAnnotationTypes("*")
-                                      .onEachRound(roundAction)
+                                      .performingOnEachRound(roundAction)
                                       .build();
 
         project()

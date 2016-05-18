@@ -16,6 +16,10 @@ public class ProjectBuilder {
     private Processor processor;
     private Path projectDir;
 
+    public static ProjectBuilder project() {
+        return new ProjectBuilder();
+    }
+
     public ProjectBuilder inDir(Path projectDir) {
         this.projectDir = projectDir;
         return this;
