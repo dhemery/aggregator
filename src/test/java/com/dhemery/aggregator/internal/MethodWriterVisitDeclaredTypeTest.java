@@ -1,44 +1,32 @@
 package com.dhemery.aggregator.internal;
 
 
-import com.dhemery.aggregator.helpers.FakeDeclaredType;
-import com.dhemery.aggregator.helpers.FakeTypeElement;
-import org.jmock.Expectations;
-import org.jmock.auto.Mock;
-import org.jmock.integration.junit4.JUnitRuleMockery;
-import org.junit.*;
+import com.dhemery.aggregator.helpers.SourceFile;
+import com.dhemery.aggregator.helpers.TestTarget;
+import org.junit.Test;
 
-import javax.lang.model.type.DeclaredType;
-import java.util.function.Consumer;
+import javax.lang.model.element.ExecutableElement;
+import java.io.IOException;
 
-public class MethodWriterVisitDeclaredTypeTest {
-    @Rule
-    public JUnitRuleMockery context = new JUnitRuleMockery();
-    @Mock
-    private Consumer<String> declaration;
-    @Mock
-    private TypeReferences namer;
+import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFileForClass;
+import static java.lang.String.format;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
-    private MethodWriter subject;
-
-    @Before
-    public void setup() {
-        subject = new MethodWriter(namer);
-    }
+public class MethodWriterVisitDeclaredTypeTest extends MethodWriterTestBase {
 
     @Test
-    public void simpleDeclaredType() {
-        String typeName = "foo.bar.Baz";
-        FakeTypeElement typeElement = new FakeTypeElement(typeName);
-        DeclaredType simpleDeclaredType = new FakeDeclaredType(typeElement);
+    public void simpleDeclaredType() throws IOException {
+        SourceFile sourceFile = sourceFileForClass("Simple")
+                                        .withLine(format("@%s", TestTarget.class.getName()))
+                                        .withLine("public static java.nio.file.Path makeAPath() { return null; }")
+                                        .build();
 
-        context.checking(new Expectations() {{
-            allowing(namer).nameOf(with(simpleDeclaredType));
-                will(returnValue(typeName));
+        StringBuilder declaration = new StringBuilder();
 
-            oneOf(declaration).accept(typeName);
-        }});
+        process(sourceFile, by(visiting(ExecutableElement::getReturnType, declaration::append)));
 
-        subject.visit(simpleDeclaredType, declaration);
+        assertThat(declaration, is("java.nio.file.Path"));
     }
+
 }
