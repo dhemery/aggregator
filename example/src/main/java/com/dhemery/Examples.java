@@ -29,7 +29,7 @@ public class Examples {
 
     @Example
     public static Object throwsExceptions() throws IOException, NullPointerException {
-        return null;
+        throw new IOException();
     }
 
     @Example
