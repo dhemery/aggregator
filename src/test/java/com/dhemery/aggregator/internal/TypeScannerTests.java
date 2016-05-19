@@ -7,6 +7,7 @@ import javax.lang.model.element.Element;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFileForClass;
 import static java.lang.String.format;
@@ -23,24 +24,18 @@ public class TypeScannerTests extends ProcessorTestBase {
                                         .withLine("public static java.nio.file.Path makeAPath() { return null; }")
                                         .build();
 
-        Set<String> scannedTypes = scanTypesUsedIn(sourceFile);
+        Set<String> scannedTypes = new HashSet<>();
+
+        process(sourceFile, by(withEachUsedType(scannedTypes::add)));
 
         assertThat(scannedTypes, containsInAnyOrder("java.nio.file.Path"));
     }
 
-    private Set<String> scanTypesUsedIn(SourceFile sourceFile) throws IOException {
-        Set<String> scannedTypes = new HashSet<>();
-
-        process(sourceFile, by(scanningMethods(scanner, scannedTypes)));
-
-        return scannedTypes;
-    }
-
-    private RoundProcessor scanningMethods(TypeScanner scanned, Set<String> scannedTypes) {
+    private RoundProcessor withEachUsedType(Consumer<String> action) {
         return (annotations, roundEnvironment, processingEnv) -> {
-            roundEnvironment.getElementsAnnotatedWith(TestTarget.class).stream()
+            testTargetElements(roundEnvironment).stream()
                     .map(Element::asType)
-                    .forEach(e -> e.accept(scanned, scannedTypes::add));
+                    .forEach(e -> e.accept(scanner, action));
             return false;
         };
     }

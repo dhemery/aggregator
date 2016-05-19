@@ -27,7 +27,7 @@ class ProcessorTestBase {
                        .build();
     }
 
-    Set<ExecutableElement> targetedMethodElements(RoundEnvironment roundEnvironment) {
+    Set<ExecutableElement> testTargetElements(RoundEnvironment roundEnvironment) {
         return roundEnvironment.getElementsAnnotatedWith(TestTarget.class).stream()
                        .map(ExecutableElement.class::cast)
                        .collect(toSet());

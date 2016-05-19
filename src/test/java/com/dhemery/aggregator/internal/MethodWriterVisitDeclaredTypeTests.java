@@ -13,7 +13,7 @@ import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class MethodWriterVisitDeclaredTypeTest extends MethodWriterTestBase {
+public class MethodWriterVisitDeclaredTypeTests extends MethodWriterTestBase {
 
     @Test
     public void simpleDeclaredType() throws IOException {
@@ -24,9 +24,8 @@ public class MethodWriterVisitDeclaredTypeTest extends MethodWriterTestBase {
 
         StringBuilder declaration = new StringBuilder();
 
-        process(sourceFile, by(visiting(ExecutableElement::getReturnType, declaration::append)));
+        process(sourceFile, by(withEach(ExecutableElement::getReturnType, declaration::append)));
 
-        assertThat(declaration, is("java.nio.file.Path"));
+        assertThat(declaration.toString(), is("java.nio.file.Path"));
     }
-
 }

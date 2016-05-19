@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
-public class Dirs {
+class Dirs {
     private static void create(Path dir) {
         try {
             Files.createDirectories(dir);
@@ -13,12 +13,12 @@ public class Dirs {
         }
     }
 
-    public static void createEmpty(Path dir) {
+    static void createEmpty(Path dir) {
         delete(dir);
         create(dir);
     }
 
-    public static Path createTemporary() {
+    static Path createTemporary() {
         try {
             Path tmpDir = Files.createTempDirectory(null).toAbsolutePath();
             tmpDir.toFile().deleteOnExit();
@@ -28,7 +28,7 @@ public class Dirs {
         }
     }
 
-    public static void delete(Path dir) {
+    private static void delete(Path dir) {
         if (!Files.exists(dir)) return;
         if (!Files.isDirectory(dir))
             throw new RuntimeException("Refusing to delete non-directory " + dir);
