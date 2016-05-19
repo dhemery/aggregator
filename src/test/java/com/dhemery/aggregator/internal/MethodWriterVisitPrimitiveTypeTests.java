@@ -45,7 +45,7 @@ public class MethodWriterVisitPrimitiveTypeTests extends MethodWriterTestBase {
 
         StringBuilder declaration = new StringBuilder();
 
-        process(sourceFile, by(withEach(ExecutableElement::getReturnType, declaration::append)));
+        process(sourceFile, by(withEachTypeIn(ExecutableElement::getReturnType, declaration::append)));
 
         assertThat(declaration.toString(), is(type.name));
     }

@@ -38,7 +38,7 @@ class MethodWriterTestBase extends ProcessorTestBase {
         };
     }
 
-    RoundProcessor withEach(Function<ExecutableElement, ? extends TypeMirror> typeExtractor, Consumer<String> action) {
+    RoundProcessor withEachTypeIn(Function<ExecutableElement, ? extends TypeMirror> typeExtractor, Consumer<String> action) {
         return (annotations, roundEnvironment, processingEnvironment) -> {
             testTargetElements(roundEnvironment).stream()
                     .map(typeExtractor)
