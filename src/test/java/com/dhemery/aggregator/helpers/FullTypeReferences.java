@@ -4,13 +4,12 @@ import com.dhemery.aggregator.internal.TypeReferences;
 
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
-import java.util.Collections;
 import java.util.Set;
 
 public class FullTypeReferences implements TypeReferences {
     @Override
     public Set<String> fullNames() {
-        return Collections.emptySet();
+        throw new UnsupportedOperationException();
     }
 
     @Override

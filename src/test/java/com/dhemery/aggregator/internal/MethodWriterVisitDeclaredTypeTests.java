@@ -4,7 +4,7 @@ package com.dhemery.aggregator.internal;
 import com.dhemery.aggregator.helpers.*;
 import org.junit.*;
 
-import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFileForClass;
+import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFile;
 import static com.dhemery.aggregator.helpers.TypeVisitorTour.returnType;
 import static com.dhemery.aggregator.helpers.TypeVisitorTour.visitEach;
 import static java.lang.String.format;
@@ -21,10 +21,10 @@ public class MethodWriterVisitDeclaredTypeTests {
 
     @Test
     public <P> void simpleDeclaredType() {
-        SourceFile sourceFile = sourceFileForClass("Simple")
+        SourceFile sourceFile = sourceFile()
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine("public static java.nio.file.Path makeAPath() { return null; }")
-                                        .build();
+                                        .forClass("Simple");
 
         StringBuilder declaration = new StringBuilder();
 
@@ -37,10 +37,10 @@ public class MethodWriterVisitDeclaredTypeTests {
     @Test
     @Ignore("test itself is wip")
     public void genericDeclaredType() {
-        SourceFile sourceFile = sourceFileForClass("Simple")
+        SourceFile sourceFile = sourceFile()
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine("public static <T extends java.nio.file.Path> T makeAPath() { return null; }")
-                                        .build();
+                                        .forClass("Simple");
 
         StringBuilder declaration = new StringBuilder();
 

@@ -11,7 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFileForClass;
+import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFile;
 import static com.dhemery.aggregator.helpers.TypeVisitorTour.returnType;
 import static com.dhemery.aggregator.helpers.TypeVisitorTour.visitEach;
 import static java.lang.String.format;
@@ -45,10 +45,10 @@ public class MethodWriterVisitPrimitiveTypeTests {
 
     @Test
     public void primitiveType() {
-        SourceFile sourceFile = sourceFileForClass("PrimitiveReturnType")
+        SourceFile sourceFile = sourceFile()
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine(format("public static %s returnsPrimitiveType() { %s }", type.name, type.returnStatement))
-                                        .build();
+                                        .forClass("Simple");
 
         StringBuilder declaration = new StringBuilder();
 
