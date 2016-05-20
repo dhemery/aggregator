@@ -1,25 +1,33 @@
 package com.dhemery.aggregator.internal;
 
-import com.dhemery.aggregator.helpers.SourceFile;
-import com.dhemery.aggregator.helpers.TestTarget;
+import com.dhemery.aggregator.helpers.*;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import javax.lang.model.element.ExecutableElement;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
 import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFileForClass;
+import static com.dhemery.aggregator.helpers.TypeVisitorTour.returnType;
+import static com.dhemery.aggregator.helpers.TypeVisitorTour.visitEach;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @RunWith(Parameterized.class)
-public class MethodWriterVisitPrimitiveTypeTests extends MethodWriterTestBase {
+public class MethodWriterVisitPrimitiveTypeTests {
+    public MethodWriter writer;
+
+    @Before
+    public void setup() {
+        writer = new MethodWriter(new FullTypeReferences());
+    }
+
     @Parameter
     public TestType type;
 
@@ -45,7 +53,8 @@ public class MethodWriterVisitPrimitiveTypeTests extends MethodWriterTestBase {
 
         StringBuilder declaration = new StringBuilder();
 
-        process(sourceFile, by(withEachTypeIn(ExecutableElement::getReturnType, declaration::append)));
+        visitEach(sourceFile, TestTarget.class, returnType())
+                .with(writer, declaration::append);
 
         assertThat(declaration.toString(), is(type.name));
     }
