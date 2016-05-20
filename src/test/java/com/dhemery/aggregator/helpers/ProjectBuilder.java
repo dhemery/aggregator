@@ -14,32 +14,14 @@ public class ProjectBuilder {
     private Path sourceDir = Paths.get("sources");
     private Path outputDir = Paths.get("classes");
     private Processor processor;
-    private Path projectDir;
 
     public static ProjectBuilder project() {
         return new ProjectBuilder();
     }
 
-    public ProjectBuilder inDir(Path projectDir) {
-        this.projectDir = projectDir;
-        return this;
-    }
-
-    public ProjectBuilder inDir(String dir) {
-        return inDir(Paths.get(dir));
-    }
-
     public ProjectBuilder withSourceFile(SourceFile sourceFile) {
         sourceFiles.add(sourceFile);
         return this;
-    }
-
-    public ProjectBuilder withSourceFile(Path relativeSourcePath, List<String> code) {
-        return withSourceFile(new SourceFile(relativeSourcePath, code));
-    }
-
-    public ProjectBuilder withSourceFile(String relativeSourcePath, List<String> code) {
-        return withSourceFile(Paths.get(relativeSourcePath), code);
     }
 
     public ProjectBuilder withProcessor(Processor processor) {
@@ -48,9 +30,7 @@ public class ProjectBuilder {
     }
 
     public boolean compile() throws IOException {
-        Path absoluteProjectDir = Optional.ofNullable(projectDir)
-                                          .map(Path::toAbsolutePath)
-                                          .orElseGet(Dirs::createTemporary);
+        Path absoluteProjectDir = Dirs.createTemporary();
         Path absoluteSourceDir = sourceDir.isAbsolute() ? sourceDir : absoluteProjectDir.resolve(sourceDir);
         Path absoluteOutputDir = outputDir.isAbsolute() ? outputDir : absoluteProjectDir.resolve(outputDir);
         Dirs.createEmpty(absoluteSourceDir);

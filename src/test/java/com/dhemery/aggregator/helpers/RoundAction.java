@@ -6,8 +6,8 @@ import javax.lang.model.element.TypeElement;
 import java.util.Set;
 
 @FunctionalInterface
-public interface RoundProcessor {
-    boolean processRound(Set<? extends TypeElement> annotations,
-                         RoundEnvironment roundEnvironment,
-                         ProcessingEnvironment processingEnvironment);
+public interface RoundAction {
+    boolean process(Set<? extends TypeElement> annotations,
+                    RoundEnvironment roundEnvironment,
+                    ProcessingEnvironment processingEnvironment);
 }
