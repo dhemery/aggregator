@@ -1,8 +1,10 @@
 package com.dhemery.aggregator.helpers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 
 public class SourceFileBuilder {
     private final String className;
@@ -20,8 +22,8 @@ public class SourceFileBuilder {
         return withLines(line);
     }
 
-    public SourceFileBuilder withLines(String... lines) {
-        this.bodyLines.addAll(Arrays.asList(lines));
+    public SourceFileBuilder withLines(String first, String... others) {
+        this.bodyLines.addAll(Streams.streamOf(first, others).collect(toList()));
         return this;
     }
 

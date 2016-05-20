@@ -5,7 +5,6 @@ import com.dhemery.aggregator.helpers.TestTarget;
 import org.junit.Test;
 
 import javax.lang.model.element.Element;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +18,7 @@ public class TypeScannerTests {
     private final TypeScanner scanner = new TypeScanner();
 
     @Test
-    public void reportsDeclaredReturnReturnType() throws IOException {
+    public void reportsDeclaredReturnReturnType() {
         SourceFile sourceFile = sourceFileForClass("Simple")
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine("public static java.nio.file.Path makeAPath() { return null; }")

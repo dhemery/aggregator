@@ -6,7 +6,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.type.TypeVisitor;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class TypeVisitorTour {
         return visitEach(sourceFile, annotationType, e -> true, elementMapper);
     }
 
-    public <R, P> List<R> with(TypeVisitor<R, P> visitor, P input) throws IOException {
+    public <R, P> List<R> with(TypeVisitor<R, P> visitor, P input) {
         List<R> output = new ArrayList<>();
         RoundAction roundAction = roundAction(annotationType, elementFilter, elementMapper, visitor, input, output);
         process(sourceFile, annotationType, roundAction);
@@ -58,12 +57,11 @@ public class TypeVisitorTour {
         };
     }
 
-    public static boolean process(SourceFile sourceFile, Class<? extends Annotation> annotationType, RoundAction roundAction) throws IOException {
+    public static boolean process(SourceFile sourceFile, Class<? extends Annotation> annotationType, RoundAction roundAction) {
         Processor processor = new RoundActionProcessor(roundAction, SourceVersion.latestSupported(), annotationType);
         return project()
-                       .withSourceFile(sourceFile)
-                       .withProcessor(processor)
-                       .compile();
+                       .with(sourceFile)
+                       .compileWith(processor);
     }
 
     public static Function<Element, TypeMirror> returnType() {

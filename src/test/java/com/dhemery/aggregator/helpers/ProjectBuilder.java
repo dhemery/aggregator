@@ -1,44 +1,45 @@
 package com.dhemery.aggregator.helpers;
 
 import javax.annotation.processing.Processor;
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
-import static java.util.stream.Collectors.toSet;
-
 public class ProjectBuilder {
-    private List<SourceFile> sourceFiles = new ArrayList<>();
-    private Path sourceDir = Paths.get("sources");
-    private Path outputDir = Paths.get("classes");
-    private Processor processor;
+    private final Path sourceDir;
+    private final Path outputDir;
+    private final List<SourceFile> sourceFiles = new ArrayList<>();
+
+    private ProjectBuilder(Path sourceDir, Path outputDir) {
+        this.sourceDir = sourceDir;
+        this.outputDir = outputDir;
+    }
 
     public static ProjectBuilder project() {
-        return new ProjectBuilder();
+        return project(Dirs.createTemporary());
     }
 
-    public ProjectBuilder withSourceFile(SourceFile sourceFile) {
-        sourceFiles.add(sourceFile);
+    public static ProjectBuilder project(Path projectDir) {
+        return project(projectDir.resolve("sources"), projectDir.resolve("output"));
+    }
+
+    private static ProjectBuilder project(Path sourceDir, Path outputDir) {
+        return new ProjectBuilder(sourceDir, outputDir);
+    }
+
+    public ProjectBuilder with(SourceFile... sourceFiles) {
+        this.sourceFiles.addAll(Arrays.asList(sourceFiles));
         return this;
     }
 
-    public ProjectBuilder withProcessor(Processor processor) {
-        this.processor = processor;
-        return this;
+    public Project build() {
+        return new Project(sourceDir, outputDir, sourceFiles);
     }
 
-    public boolean compile() throws IOException {
-        Path absoluteProjectDir = Dirs.createTemporary();
-        Path absoluteSourceDir = sourceDir.isAbsolute() ? sourceDir : absoluteProjectDir.resolve(sourceDir);
-        Path absoluteOutputDir = outputDir.isAbsolute() ? outputDir : absoluteProjectDir.resolve(outputDir);
-        Dirs.createEmpty(absoluteSourceDir);
-        Dirs.createEmpty(absoluteOutputDir);
-        Set<File> writtenSourceFiles = sourceFiles.stream()
-                                               .map(e -> e.writeTo(absoluteSourceDir))
-                                               .map(Path::toFile)
-                                               .collect(toSet());
-        return new Project(absoluteOutputDir, processor, writtenSourceFiles).compile();
+    public boolean compile() {
+        return build().compile();
+    }
+
+    public boolean compileWith(Processor processor) {
+        return build().compileWith(processor);
     }
 }

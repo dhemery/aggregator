@@ -28,14 +28,14 @@ class Dirs {
         }
     }
 
-    private static void delete(Path dir) {
-        if (!Files.exists(dir)) return;
-        if (!Files.isDirectory(dir))
-            throw new RuntimeException("Refusing to delete non-directory " + dir);
+    private static void delete(Path path) {
+        if (!Files.exists(path)) return;
+        if (!Files.isDirectory(path))
+            throw new RuntimeException("Refusing to delete non-directory " + path);
         try {
-            Files.walkFileTree(dir, deleteRecursively());
+            Files.walkFileTree(path, deleteRecursively());
         } catch (IOException e) {
-            throw new RuntimeException("Error deleting " + dir, e);
+            throw new RuntimeException("Error deleting " + path, e);
         }
     }
 

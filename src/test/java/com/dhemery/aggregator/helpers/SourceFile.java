@@ -1,7 +1,8 @@
 package com.dhemery.aggregator.helpers;
 
-import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 public class SourceFile {
@@ -10,20 +11,18 @@ public class SourceFile {
 
     public SourceFile(Path relativePath, List<String> content) {
         path = relativePath;
-        this.content = content;
+        this.content = Collections.unmodifiableList(content);
     }
 
     public SourceFile(String relativePath, List<String> content) {
         this(Paths.get(relativePath), content);
     }
 
-    public Path writeTo(Path sourceDir) {
-        Path fullPath = sourceDir.resolve(path);
-        try {
-            Files.write(fullPath, content, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot write project source file " + fullPath, e);
-        }
-        return fullPath;
+    public Path path() {
+        return path;
+    }
+
+    public List<String> content() {
+        return content;
     }
 }

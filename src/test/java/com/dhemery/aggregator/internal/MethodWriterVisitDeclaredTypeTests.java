@@ -4,8 +4,6 @@ package com.dhemery.aggregator.internal;
 import com.dhemery.aggregator.helpers.*;
 import org.junit.*;
 
-import java.io.IOException;
-
 import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFileForClass;
 import static com.dhemery.aggregator.helpers.TypeVisitorTour.returnType;
 import static com.dhemery.aggregator.helpers.TypeVisitorTour.visitEach;
@@ -22,7 +20,7 @@ public class MethodWriterVisitDeclaredTypeTests {
     }
 
     @Test
-    public <P> void simpleDeclaredType() throws IOException {
+    public <P> void simpleDeclaredType() {
         SourceFile sourceFile = sourceFileForClass("Simple")
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine("public static java.nio.file.Path makeAPath() { return null; }")
@@ -38,7 +36,7 @@ public class MethodWriterVisitDeclaredTypeTests {
 
     @Test
     @Ignore("test itself is wip")
-    public void genericDeclaredType() throws IOException {
+    public void genericDeclaredType() {
         SourceFile sourceFile = sourceFileForClass("Simple")
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine("public static <T extends java.nio.file.Path> T makeAPath() { return null; }")

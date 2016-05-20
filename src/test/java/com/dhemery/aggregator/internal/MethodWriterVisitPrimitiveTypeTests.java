@@ -8,7 +8,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -45,7 +44,7 @@ public class MethodWriterVisitPrimitiveTypeTests {
     }
 
     @Test
-    public void primitiveType() throws IOException {
+    public void primitiveType() {
         SourceFile sourceFile = sourceFileForClass("PrimitiveReturnType")
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine(format("public static %s returnsPrimitiveType() { %s }", type.name, type.returnStatement))
