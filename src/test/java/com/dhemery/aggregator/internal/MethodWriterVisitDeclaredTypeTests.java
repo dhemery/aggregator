@@ -4,8 +4,9 @@ package com.dhemery.aggregator.internal;
 import com.dhemery.aggregator.helpers.*;
 import org.junit.*;
 
-import static com.dhemery.aggregator.helpers.ProcessorUtils.RETURN_TYPE;
-import static com.dhemery.aggregator.helpers.ProcessorUtils.each;
+import javax.lang.model.element.ExecutableElement;
+
+import static com.dhemery.aggregator.helpers.CompilationBuilder.process;
 import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFile;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,7 +29,11 @@ public class MethodWriterVisitDeclaredTypeTests {
 
         StringBuilder declaration = new StringBuilder();
 
-        each(sourceFile, TestTarget.class, RETURN_TYPE, t -> t.accept(writer, declaration::append));
+        process().annotations(TestTarget.class).in(sourceFile).by(
+                re -> re.getElementsAnnotatedWith(TestTarget.class).stream()
+                              .map(ExecutableElement.class::cast)
+                              .map(ExecutableElement::getReturnType)
+                              .forEach(t -> t.accept(writer, declaration::append)));
 
         assertThat(declaration.toString(), is("java.nio.file.Path"));
     }
@@ -43,7 +48,11 @@ public class MethodWriterVisitDeclaredTypeTests {
 
         StringBuilder declaration = new StringBuilder();
 
-        each(sourceFile, TestTarget.class, RETURN_TYPE, t -> t.accept(writer, declaration::append));
+        process().annotations(TestTarget.class).in(sourceFile).by(
+                re -> re.getElementsAnnotatedWith(TestTarget.class).stream()
+                              .map(ExecutableElement.class::cast)
+                              .map(ExecutableElement::getReturnType)
+                              .forEach(t -> t.accept(writer, declaration::append)));
 
         assertThat(declaration.toString(), is("java.nio.file.Path"));
     }

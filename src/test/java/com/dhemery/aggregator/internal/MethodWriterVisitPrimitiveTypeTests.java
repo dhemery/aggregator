@@ -8,11 +8,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import javax.lang.model.element.ExecutableElement;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.dhemery.aggregator.helpers.ProcessorUtils.RETURN_TYPE;
-import static com.dhemery.aggregator.helpers.ProcessorUtils.each;
+import static com.dhemery.aggregator.helpers.CompilationBuilder.process;
 import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFile;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -52,7 +52,11 @@ public class MethodWriterVisitPrimitiveTypeTests {
 
         StringBuilder declaration = new StringBuilder();
 
-        each(sourceFile, TestTarget.class, RETURN_TYPE, t -> t.accept(writer, declaration::append));
+        process().annotations(TestTarget.class).in(sourceFile).by(
+                re -> re.getElementsAnnotatedWith(TestTarget.class).stream()
+                              .map(ExecutableElement.class::cast)
+                              .map(ExecutableElement::getReturnType)
+                              .forEach(t -> t.accept(writer, declaration::append)));
 
         assertThat(declaration.toString(), is(type.name));
     }

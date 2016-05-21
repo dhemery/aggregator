@@ -26,6 +26,11 @@ public class ProjectBuilder {
         return new ProjectBuilder(sourceDir, outputDir);
     }
 
+    public ProjectBuilder with(Set<SourceFile> sourceFiles) {
+        this.sourceFiles.addAll(sourceFiles);
+        return this;
+    }
+
     public ProjectBuilder with(SourceFile first, SourceFile... others) {
         sourceFiles.add(first);
         sourceFiles.addAll(Arrays.asList(others));

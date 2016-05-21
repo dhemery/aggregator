@@ -7,6 +7,9 @@ import static java.lang.String.format;
 public class SourceFileBuilder {
     private final List<String> bodyLines = new ArrayList<>();
 
+    private SourceFileBuilder() {
+    }
+
     public static SourceFileBuilder sourceFile() {
         return new SourceFileBuilder();
     }

@@ -5,8 +5,9 @@ import javax.lang.model.SourceVersion;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
-import static com.dhemery.aggregator.helpers.Streams.streamOf;
+import static java.util.stream.Collectors.toSet;
 
 public class ProcessorBuilder {
     private final Set<String> supportedAnnotationTypeNames = new HashSet<>();
@@ -15,28 +16,21 @@ public class ProcessorBuilder {
     private ProcessorBuilder() {
     }
 
-    public static ProcessorBuilder processorSupporting(String firstAnnotationTypeName, String... otherAnnotationTypeNames) {
-        return new ProcessorBuilder()
-                       .supporting(firstAnnotationTypeName, otherAnnotationTypeNames);
+    public static ProcessorBuilder processor() {
+        return new ProcessorBuilder();
     }
 
-    @SafeVarargs
-    public static ProcessorBuilder processorSupporting(Class<? extends Annotation> first, Class<? extends Annotation>... others) {
-        return new ProcessorBuilder()
-                       .supporting(first, others);
+    public ProcessorBuilder supporting(Class<? extends Annotation>... annotationTypes) {
+        return supporting(Stream.of(annotationTypes).map(Class::getCanonicalName).collect(toSet()));
     }
 
-    public ProcessorBuilder supporting(Class<? extends Annotation> first, Class<? extends Annotation>... others) {
-        streamOf(first, others)
-                .map(Class::getCanonicalName)
-                .forEach(supportedAnnotationTypeNames::add);
+    public ProcessorBuilder supporting(Set<String> annotationTypeNames) {
+        this.supportedAnnotationTypeNames.addAll(annotationTypeNames);
         return this;
     }
 
-    public ProcessorBuilder supporting(String first, String... others) {
-        streamOf(first, others)
-                .forEach(supportedAnnotationTypeNames::add);
-        return this;
+    public ProcessorBuilder supporting(String... annotationTypeNames) {
+        return supporting(Stream.of(annotationTypeNames).collect(toSet()));
     }
 
     public ProcessorBuilder supporting(SourceVersion sourceVersion) {
