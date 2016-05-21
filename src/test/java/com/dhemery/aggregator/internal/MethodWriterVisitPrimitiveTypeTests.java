@@ -52,7 +52,7 @@ public class MethodWriterVisitPrimitiveTypeTests {
 
         StringBuilder declaration = new StringBuilder();
 
-        process().annotations(TestTarget.class).in(sourceFile).by(
+        process(TestTarget.class).in(sourceFile).by(
                 re -> re.getElementsAnnotatedWith(TestTarget.class).stream()
                               .map(ExecutableElement.class::cast)
                               .map(ExecutableElement::getReturnType)

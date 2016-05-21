@@ -26,7 +26,7 @@ public class TypeScannerTests {
 
         Set<String> scannedTypes = new HashSet<>();
 
-        process().annotations(TestTarget.class).in(sourceFile).by(
+        process(TestTarget.class).in(sourceFile).by(
                 re -> re.getElementsAnnotatedWith(TestTarget.class).stream()
                               .map(ExecutableElement.class::cast)
                               .map(ExecutableElement::getReturnType)

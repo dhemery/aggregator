@@ -21,7 +21,7 @@ public class MethodWriterVisitDeclaredTypeTests {
     }
 
     @Test
-    public <P> void simpleDeclaredType() {
+    public void simpleDeclaredType() {
         SourceFile sourceFile = sourceFile()
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine("public static java.nio.file.Path makeAPath() { return null; }")
@@ -29,7 +29,7 @@ public class MethodWriterVisitDeclaredTypeTests {
 
         StringBuilder declaration = new StringBuilder();
 
-        process().annotations(TestTarget.class).in(sourceFile).by(
+        process(TestTarget.class).in(sourceFile).by(
                 re -> re.getElementsAnnotatedWith(TestTarget.class).stream()
                               .map(ExecutableElement.class::cast)
                               .map(ExecutableElement::getReturnType)
@@ -39,7 +39,7 @@ public class MethodWriterVisitDeclaredTypeTests {
     }
 
     @Test
-    @Ignore("test itself is wip")
+    @Ignore("test is wip")
     public void genericDeclaredType() {
         SourceFile sourceFile = sourceFile()
                                         .withLine(format("@%s", TestTarget.class.getName()))
@@ -48,7 +48,7 @@ public class MethodWriterVisitDeclaredTypeTests {
 
         StringBuilder declaration = new StringBuilder();
 
-        process().annotations(TestTarget.class).in(sourceFile).by(
+        process(TestTarget.class).in(sourceFile).by(
                 re -> re.getElementsAnnotatedWith(TestTarget.class).stream()
                               .map(ExecutableElement.class::cast)
                               .map(ExecutableElement::getReturnType)
@@ -56,5 +56,4 @@ public class MethodWriterVisitDeclaredTypeTests {
 
         assertThat(declaration.toString(), is("java.nio.file.Path"));
     }
-
 }
