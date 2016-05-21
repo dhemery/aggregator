@@ -4,8 +4,8 @@ package com.dhemery.aggregator.internal;
 import com.dhemery.aggregator.helpers.*;
 import org.junit.*;
 
-import static com.dhemery.aggregator.helpers.ProcessorBuilder.each;
 import static com.dhemery.aggregator.helpers.ProcessorUtils.RETURN_TYPE;
+import static com.dhemery.aggregator.helpers.ProcessorUtils.each;
 import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFile;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
