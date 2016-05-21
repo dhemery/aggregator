@@ -4,24 +4,17 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
-import java.lang.annotation.Annotation;
 import java.util.Set;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toSet;
 
 public class RoundActionProcessor extends AbstractProcessor {
     private final RoundAction roundAction;
     private final SourceVersion supportedSourceVersion;
     private final Set<String> supportedAnnotationTypeNames;
 
-    @SafeVarargs
-    public RoundActionProcessor(RoundAction roundAction, SourceVersion supportedSourceVersion, Class<? extends Annotation>... supportedAnnotationTypes) {
+    public RoundActionProcessor(RoundAction roundAction, SourceVersion supportedSourceVersion, Set<String> supportedAnnotationTypeNames) {
         this.roundAction = roundAction;
         this.supportedSourceVersion = supportedSourceVersion;
-        this.supportedAnnotationTypeNames = Stream.of(supportedAnnotationTypes)
-                                                    .map(Class::getCanonicalName)
-                                                    .collect(toSet());
+        this.supportedAnnotationTypeNames = supportedAnnotationTypeNames;
     }
 
     @Override

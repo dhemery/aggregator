@@ -4,9 +4,9 @@ package com.dhemery.aggregator.internal;
 import com.dhemery.aggregator.helpers.*;
 import org.junit.*;
 
+import static com.dhemery.aggregator.helpers.ProcessorBuilder.each;
+import static com.dhemery.aggregator.helpers.ProcessorUtils.RETURN_TYPE;
 import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFile;
-import static com.dhemery.aggregator.helpers.TypeVisitorTour.returnType;
-import static com.dhemery.aggregator.helpers.TypeVisitorTour.visitEach;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -28,8 +28,7 @@ public class MethodWriterVisitDeclaredTypeTests {
 
         StringBuilder declaration = new StringBuilder();
 
-        visitEach(sourceFile, TestTarget.class, returnType())
-                .with(writer, declaration::append);
+        each(sourceFile, TestTarget.class, RETURN_TYPE, t -> t.accept(writer, declaration::append));
 
         assertThat(declaration.toString(), is("java.nio.file.Path"));
     }
@@ -44,9 +43,9 @@ public class MethodWriterVisitDeclaredTypeTests {
 
         StringBuilder declaration = new StringBuilder();
 
-        visitEach(sourceFile, TestTarget.class, returnType())
-                .with(writer, declaration::append);
+        each(sourceFile, TestTarget.class, RETURN_TYPE, t -> t.accept(writer, declaration::append));
 
         assertThat(declaration.toString(), is("java.nio.file.Path"));
     }
+
 }
