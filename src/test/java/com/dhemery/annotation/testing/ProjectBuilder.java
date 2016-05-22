@@ -44,17 +44,6 @@ public class ProjectBuilder {
         return new Project(sourceDir, outputDir, sourceFiles);
     }
 
-    public boolean compile() {
-        return compileWith(Collections.emptySet());
-    }
-
-    public boolean compileWith(Processor processor, Processor... others) {
-        Set<Processor> processors = new HashSet<>();
-        processors.add(processor);
-        processors.addAll(Arrays.asList(others));
-        return compileWith(processors);
-    }
-
     public boolean compileWith(Set<Processor> processors) {
         return build().compileWith(processors);
     }

@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import static com.dhemery.annotation.testing.ProcessorBuilder.processor;
 import static com.dhemery.annotation.testing.ProjectBuilder.project;
+import static com.dhemery.annotation.testing.RoundAction.onRoundEnvironment;
 
 public class CompilationBuilder {
     private final Set<SourceFile> sourceFiles = new HashSet<>();
@@ -16,37 +17,32 @@ public class CompilationBuilder {
     private CompilationBuilder() {
     }
 
-    public static Fresh process() {
-        return new CompilationBuilder().new Fresh();
+    public static CompilationBuilder process() {
+        return new CompilationBuilder();
     }
 
-    public class Fresh {
-        private Fresh() {
-        }
+    public WithAnnotations annotationTypeNamed(String name) {
+        return new WithAnnotations().andAnnotationTypeNamed(name);
+    }
 
-        public WithAnnotations annotationTypeNamed(String name) {
-            return new WithAnnotations().andAnnotationTypeNamed(name);
-        }
+    public WithAnnotations annotationTypesNamed(String name, String another, String... others) {
+        return new WithAnnotations().andAnnotationTypesNamed(name, another, others);
+    }
 
-        public WithAnnotations annotationTypesNamed(String name, String another, String... others) {
-            return new WithAnnotations().andAnnotationTypesNamed(name, another, others);
-        }
+    public WithAnnotations annotationTypesNamed(Collection<String> names) {
+        return new WithAnnotations().andAnnotationTypesNamed(names);
+    }
 
-        public WithAnnotations annotationTypesNamed(Collection<String> names) {
-            return new WithAnnotations().andAnnotationTypesNamed(names);
-        }
+    public WithAnnotations annotationType(Class<? extends Annotation> type) {
+        return new WithAnnotations().andAnnotationType(type);
+    }
 
-        public WithAnnotations annotationType(Class<? extends Annotation> type) {
-            return new WithAnnotations().andAnnotationType(type);
-        }
+    public WithAnnotations annotationTypes(Class<? extends Annotation> type, Class<? extends Annotation> another, Class<? extends Annotation>... others) {
+        return new WithAnnotations().andAnnotationTypes(type, another, others);
+    }
 
-        public WithAnnotations annotationTypes(Class<? extends Annotation> type, Class<? extends Annotation> another, Class<? extends Annotation>... others) {
-            return new WithAnnotations().andAnnotationTypes(type, another, others);
-        }
-
-        public WithAnnotations annotationType(Collection<Class<? extends Annotation>> types) {
-            return new WithAnnotations().andAnnotationTypes(types);
-        }
+    public WithAnnotations annotationType(Collection<Class<? extends Annotation>> types) {
+        return new WithAnnotations().andAnnotationTypes(types);
     }
 
     public class WithAnnotations {
@@ -120,18 +116,15 @@ public class CompilationBuilder {
 
         public boolean byPerformingOnEachRound(RoundAction action) {
             Processor processor = processor()
-                                          .supporting(supportedAnnotationTypeNames)
-                                          .onEachRound(action);
+                                          .supportingAnnotationTypesNamed(supportedAnnotationTypeNames)
+                                          .performingOnEachRound(action);
             return project()
                            .withSourceFiles(sourceFiles)
-                           .compileWith(processor);
+                           .compileWith(Collections.singleton(processor));
         }
 
-        public boolean byPerformingOnEachRound(Consumer<RoundEnvironment> consumer) {
-            return byPerformingOnEachRound((annotations, roundEnvironment, processingEnvironment) -> {
-                consumer.accept(roundEnvironment);
-                return false;
-            });
+        public boolean byPerformingOnEachRound(Consumer<? super RoundEnvironment> consumer) {
+            return byPerformingOnEachRound(onRoundEnvironment(consumer));
         }
     }
 }
