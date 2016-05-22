@@ -1,4 +1,4 @@
-package com.dhemery.aggregator.helpers;
+package com.dhemery.annotation.testing;
 
 import javax.annotation.processing.Processor;
 import javax.tools.*;
@@ -9,28 +9,18 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static com.dhemery.aggregator.helpers.Streams.streamOf;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toSet;
 
 public class Project {
     private final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     private final Path sourceDir;
     private final Path outputDir;
-    private final List<SourceFile> sourceFiles;
+    private final Set<SourceFile> sourceFiles;
 
-    public Project(Path sourceDir, Path outputDir, List<SourceFile> sourceFiles) {
+    public Project(Path sourceDir, Path outputDir, Set<SourceFile> sourceFiles) {
         this.sourceDir = sourceDir.toAbsolutePath();
         this.outputDir = outputDir.toAbsolutePath();
         this.sourceFiles = sourceFiles;
-    }
-
-    public boolean compile() {
-        return compileWith(Collections.emptySet());
-    }
-
-    public boolean compileWith(Processor first, Processor... others) {
-        return compileWith(streamOf(first, others).collect(toSet()));
     }
 
     public boolean compileWith(Set<Processor> processors) {

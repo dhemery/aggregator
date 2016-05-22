@@ -1,15 +1,15 @@
 package com.dhemery.aggregator.internal;
 
-import com.dhemery.aggregator.helpers.SourceFile;
 import com.dhemery.aggregator.helpers.TestTarget;
+import com.dhemery.annotation.testing.SourceFile;
 import org.junit.Test;
 
 import javax.lang.model.element.ExecutableElement;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.dhemery.aggregator.helpers.CompilationBuilder.process;
-import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFile;
+import static com.dhemery.annotation.testing.CompilationBuilder.process;
+import static com.dhemery.annotation.testing.SourceFileBuilder.sourceFile;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -26,7 +26,7 @@ public class TypeScannerTests {
 
         Set<String> scannedTypes = new HashSet<>();
 
-        process(TestTarget.class).in(sourceFile).by(
+        process().annotationType(TestTarget.class).inSourceFile(sourceFile).byPerformingOnEachRound(
                 re -> re.getElementsAnnotatedWith(TestTarget.class).stream()
                               .map(ExecutableElement.class::cast)
                               .map(ExecutableElement::getReturnType)

@@ -1,6 +1,8 @@
 package com.dhemery.aggregator.internal;
 
-import com.dhemery.aggregator.helpers.*;
+import com.dhemery.aggregator.helpers.FullTypeReferences;
+import com.dhemery.aggregator.helpers.TestTarget;
+import com.dhemery.annotation.testing.SourceFile;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,8 +14,8 @@ import javax.lang.model.element.ExecutableElement;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static com.dhemery.aggregator.helpers.CompilationBuilder.process;
-import static com.dhemery.aggregator.helpers.SourceFileBuilder.sourceFile;
+import static com.dhemery.annotation.testing.CompilationBuilder.process;
+import static com.dhemery.annotation.testing.SourceFileBuilder.sourceFile;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -52,7 +54,7 @@ public class MethodWriterVisitPrimitiveTypeTests {
 
         StringBuilder declaration = new StringBuilder();
 
-        process(TestTarget.class).in(sourceFile).by(
+        process().annotationType(TestTarget.class).inSourceFile(sourceFile).byPerformingOnEachRound(
                 re -> re.getElementsAnnotatedWith(TestTarget.class).stream()
                               .map(ExecutableElement.class::cast)
                               .map(ExecutableElement::getReturnType)

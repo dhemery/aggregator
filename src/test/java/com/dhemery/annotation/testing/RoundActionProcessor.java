@@ -1,4 +1,4 @@
-package com.dhemery.aggregator.helpers;
+package com.dhemery.annotation.testing;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;

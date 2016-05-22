@@ -1,9 +1,8 @@
-package com.dhemery.aggregator.helpers;
+package com.dhemery.annotation.testing;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class SourceFile {
     private final Path path;
@@ -24,5 +23,17 @@ public class SourceFile {
 
     public List<String> content() {
         return content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return Objects.equals(this.path, ((SourceFile) o).path());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path);
     }
 }

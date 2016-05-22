@@ -1,4 +1,4 @@
-package com.dhemery.aggregator.helpers;
+package com.dhemery.annotation.testing;
 
 import java.util.*;
 
@@ -19,11 +19,8 @@ public class SourceFileBuilder {
         return this;
     }
 
-    public SourceFileBuilder withLines(String first, String second, String... others) {
-        bodyLines.add(first);
-        bodyLines.add(second);
-        bodyLines.addAll(Arrays.asList(others));
-        return this;
+    public SourceFileBuilder withLines(String line, String another, String... others) {
+        return withLine(line).withLine(another).withLines(Arrays.asList(others));
     }
 
     public SourceFileBuilder withLines(List<String> lines) {
