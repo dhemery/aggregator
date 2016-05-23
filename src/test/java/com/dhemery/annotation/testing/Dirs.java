@@ -5,38 +5,26 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 class Dirs {
-    private static void create(Path dir) {
-        try {
-            Files.createDirectories(dir);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create directory " + dir);
-        }
+    private static void create(Path dir) throws IOException {
+        Files.createDirectories(dir);
     }
 
-    static void createEmpty(Path dir) {
+    static void createEmpty(Path dir) throws IOException {
         delete(dir);
         create(dir);
     }
 
-    static Path createTemporary() {
-        try {
-            Path tmpDir = Files.createTempDirectory(null).toAbsolutePath();
-            tmpDir.toFile().deleteOnExit();
-            return tmpDir;
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create temporary directory", e);
-        }
+    static Path createTemporary() throws IOException {
+        Path tmpDir = Files.createTempDirectory(null).toAbsolutePath();
+        tmpDir.toFile().deleteOnExit();
+        return tmpDir;
     }
 
-    private static void delete(Path path) {
+    private static void delete(Path path) throws IOException {
         if (!Files.exists(path)) return;
         if (!Files.isDirectory(path))
             throw new RuntimeException("Refusing to delete non-directory " + path);
-        try {
-            Files.walkFileTree(path, deleteRecursively());
-        } catch (IOException e) {
-            throw new RuntimeException("Error deleting " + path, e);
-        }
+        Files.walkFileTree(path, deleteRecursively());
     }
 
     private static SimpleFileVisitor<Path> deleteRecursively() {

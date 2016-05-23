@@ -1,7 +1,6 @@
 package com.dhemery.aggregator.internal;
 
 import com.dhemery.aggregator.Aggregate;
-import com.dhemery.aggregator.AggregatorException;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.ExecutableElement;
@@ -28,7 +27,7 @@ public class AggregateWriter {
         this.namer = namer;
     }
 
-    public void write(Filer filer) {
+    public void write(Filer filer) throws IOException {
         MethodWriter methodWriter = new MethodWriter(namer);
 
         PrintWriter out = printWriter(filer);
@@ -97,13 +96,9 @@ public class AggregateWriter {
         return qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
     }
 
-    private PrintWriter printWriter(Filer filer) {
+    private PrintWriter printWriter(Filer filer) throws IOException {
         String aggregateName = aggregateName();
-        try {
-            JavaFileObject sourceFile = filer.createSourceFile(aggregateName);
-            return new PrintWriter(sourceFile.openWriter());
-        } catch (IOException cause) {
-            throw new AggregatorException(aggregateName(), aggregateAnnotationName(), cause);
-        }
+        JavaFileObject sourceFile = filer.createSourceFile(aggregateName);
+        return new PrintWriter(sourceFile.openWriter());
     }
 }

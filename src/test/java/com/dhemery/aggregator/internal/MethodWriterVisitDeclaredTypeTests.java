@@ -7,6 +7,7 @@ import com.dhemery.annotation.testing.SourceFile;
 import org.junit.*;
 
 import javax.lang.model.element.ExecutableElement;
+import java.io.IOException;
 
 import static com.dhemery.annotation.testing.CompilationBuilder.process;
 import static com.dhemery.annotation.testing.SourceFileBuilder.sourceFile;
@@ -23,7 +24,7 @@ public class MethodWriterVisitDeclaredTypeTests {
     }
 
     @Test
-    public void simpleDeclaredType() {
+    public void simpleDeclaredType() throws IOException {
         SourceFile sourceFile = sourceFile()
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine("public static java.nio.file.Path makeAPath() { return null; }")
@@ -42,7 +43,7 @@ public class MethodWriterVisitDeclaredTypeTests {
 
     @Test
     @Ignore("test is wip")
-    public void genericDeclaredType() {
+    public void genericDeclaredType() throws IOException {
         SourceFile sourceFile = sourceFile()
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine("public static <T extends java.nio.file.Path> T makeAPath() { return null; }")

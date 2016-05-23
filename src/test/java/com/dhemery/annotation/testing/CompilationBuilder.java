@@ -2,6 +2,7 @@ package com.dhemery.annotation.testing;
 
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.function.Consumer;
@@ -114,7 +115,7 @@ public class CompilationBuilder {
             return this;
         }
 
-        public boolean byPerformingOnEachRound(RoundAction action) {
+        public boolean byPerformingOnEachRound(RoundAction action) throws IOException {
             Processor processor = processor()
                                           .supportingAnnotationTypesNamed(supportedAnnotationTypeNames)
                                           .performingOnEachRound(action);
@@ -123,7 +124,7 @@ public class CompilationBuilder {
                            .compileWith(Collections.singleton(processor));
         }
 
-        public boolean byPerformingOnEachRound(Consumer<? super RoundEnvironment> consumer) {
+        public boolean byPerformingOnEachRound(Consumer<? super RoundEnvironment> consumer) throws IOException {
             return byPerformingOnEachRound(onRoundEnvironment(consumer));
         }
     }

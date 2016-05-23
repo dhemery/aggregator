@@ -1,6 +1,7 @@
 package com.dhemery.annotation.testing;
 
 import javax.annotation.processing.Processor;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -14,7 +15,7 @@ public class ProjectBuilder {
         this.outputDir = outputDir;
     }
 
-    public static ProjectBuilder project() {
+    public static ProjectBuilder project() throws IOException {
         return project(Dirs.createTemporary());
     }
 
@@ -44,7 +45,7 @@ public class ProjectBuilder {
         return new Project(sourceDir, outputDir, sourceFiles);
     }
 
-    public boolean compileWith(Set<Processor> processors) {
+    public boolean compileWith(Set<Processor> processors) throws IOException {
         return build().compileWith(processors);
     }
 }

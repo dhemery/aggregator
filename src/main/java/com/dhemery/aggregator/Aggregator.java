@@ -8,8 +8,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -77,6 +76,10 @@ public class Aggregator extends AbstractProcessor {
     }
 
     private void write(AggregateWriter aggregateWriter) {
-        aggregateWriter.write(processingEnv.getFiler());
+        try {
+            aggregateWriter.write(processingEnv.getFiler());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

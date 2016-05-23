@@ -3,8 +3,7 @@ package com.dhemery.annotation.testing;
 import javax.annotation.processing.Processor;
 import javax.tools.*;
 import javax.tools.JavaCompiler.CompilationTask;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
@@ -23,14 +22,10 @@ public class Project {
         this.sourceFiles = sourceFiles;
     }
 
-    public boolean compileWith(Set<Processor> processors) {
+    public boolean compileWith(Set<Processor> processors) throws IOException {
         Dirs.createEmpty(outputDir);
-        try (StandardJavaFileManager fileManager = fileManager()) {
-            return compilationTask(fileObjects(fileManager), processors)
-                           .call();
-        } catch (IOException cause) {
-            throw new RuntimeException("Could not compile project", cause);
-        }
+        StandardJavaFileManager fileManager = fileManager();
+        return compilationTask(fileObjects(fileManager), processors).call();
     }
 
     private String classPath() {
@@ -52,7 +47,7 @@ public class Project {
         return compiler.getStandardFileManager(null, null, null);
     }
 
-    private Iterable<? extends JavaFileObject> fileObjects(StandardJavaFileManager fileManager) {
+    private Iterable<? extends JavaFileObject> fileObjects(StandardJavaFileManager fileManager) throws IOException {
         return fileManager.getJavaFileObjects(writtenSourceFiles());
     }
 
@@ -65,11 +60,11 @@ public class Project {
         try {
             Files.write(fullPath, sourceFile.content(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
         } catch (IOException e) {
-            throw new RuntimeException("Cannot write project source file " + fullPath, e);
+            throw new UncheckedIOException(e);
         }
     }
 
-    private File[] writtenSourceFiles() {
+    private File[] writtenSourceFiles() throws IOException {
         Dirs.createEmpty(sourceDir);
         return sourceFiles.stream()
                        .peek(this::write)

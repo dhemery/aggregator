@@ -5,6 +5,7 @@ import com.dhemery.annotation.testing.SourceFile;
 import org.junit.Test;
 
 import javax.lang.model.element.ExecutableElement;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class TypeScannerTests {
     private final TypeScanner scanner = new TypeScanner();
 
     @Test
-    public void reportsDeclaredReturnReturnType() {
+    public void reportsDeclaredReturnReturnType() throws IOException {
         SourceFile sourceFile = sourceFile()
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine("public static java.nio.file.Path makeAPath() { return null; }")

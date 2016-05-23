@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 import javax.lang.model.element.ExecutableElement;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -46,7 +47,7 @@ public class MethodWriterVisitPrimitiveTypeTests {
     }
 
     @Test
-    public void primitiveType() {
+    public void primitiveType() throws IOException {
         SourceFile sourceFile = sourceFile()
                                         .withLine(format("@%s", TestTarget.class.getName()))
                                         .withLine(format("public static %s returnsPrimitiveType() { %s }", type.name, type.returnStatement))
